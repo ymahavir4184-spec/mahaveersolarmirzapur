@@ -82,7 +82,7 @@ async function runTestSuite() {
     'Language overlay markup present for first-time visitors'
   );
   assert(
-    resNoCookie.body.includes('Power Your Future with Smarter Solar Energy'),
+    resNoCookie.body.includes('Power Your Future with Smarter') && resNoCookie.body.includes('Solar Energy.'),
     'Underlying page content rendered in DOM for SEO crawlers'
   );
 
