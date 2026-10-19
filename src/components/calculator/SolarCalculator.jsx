@@ -4,9 +4,28 @@ import { useState } from "react";
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
 import { useLanguage } from "@/lib/LanguageContext";
+import { normalizeIndianPhone } from "@/lib/phone";
+import { generateSolarQuotationPdf } from "@/lib/pdfGenerator";
 import Card from "../ui/Card";
 import Button from "../ui/Button";
-import { Zap, IndianRupee, Sun, Clock, Info, ExternalLink, ArrowRight } from "lucide-react";
+import {
+  Zap,
+  IndianRupee,
+  Sun,
+  Clock,
+  Info,
+  ExternalLink,
+  ArrowRight,
+  FileText,
+  Download,
+  Share2,
+  CheckCircle2,
+  User,
+  Phone,
+  MapPin,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 
 export default function SolarCalculator({ standalone = false }) {
   const { language, t } = useLanguage();
@@ -18,6 +37,14 @@ export default function SolarCalculator({ standalone = false }) {
   const [propertyType, setPropertyType] = useState("residential");
   const [roofArea, setRoofArea] = useState("");
 
+  // Client Details state
+  const [clientName, setClientName] = useState("");
+  const [clientPhone, setClientPhone] = useState("");
+  const [clientCity, setClientCity] = useState("");
+  const [phoneError, setPhoneError] = useState("");
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [actionSuccess, setActionSuccess] = useState(null);
+
   const tariff = calcConfig.defaultTariffPerUnit || 8.5;
   const generationPerKwPerDay = calcConfig.generationPerKwPerDay || 4.2;
   const costPerKw = calcConfig.costPerKw || 55000;
@@ -28,9 +55,11 @@ export default function SolarCalculator({ standalone = false }) {
   if (calculatedMonthlyUnits <= 0) calculatedMonthlyUnits = 100;
 
   // System size required to offset consumption
-  let recommendedKw = Math.max(1, Math.round((calculatedMonthlyUnits / monthlyGenPerKw) * 10) / 10);
+  const recommendedKw = Math.max(1, Math.round((calculatedMonthlyUnits / monthlyGenPerKw) * 10) / 10);
+  const panelsCount = Math.ceil((recommendedKw * 1000) / 550);
+  const roofAreaSqFt = Math.round(recommendedKw * 90);
 
-  // Roof space check (approx 90 sq ft per kW)
+  // Roof space check
   let roofWarning = null;
   if (roofArea && parseFloat(roofArea) > 0) {
     const area = parseFloat(roofArea);
@@ -47,15 +76,207 @@ export default function SolarCalculator({ standalone = false }) {
   const estMonthlyGeneration = Math.round(recommendedKw * monthlyGenPerKw);
   const estAnnualSavings = Math.round(estMonthlyGeneration * 12 * tariff);
   const estSystemCost = Math.round(recommendedKw * costPerKw);
+
+  // Subsidy calculation (PM Surya Ghar Muft Bijli Yojana)
+  let subsidyAmount = 0;
+  if (propertyType === "residential") {
+    if (recommendedKw < 2) {
+      subsidyAmount = 30000;
+    } else if (recommendedKw < 3) {
+      subsidyAmount = 60000;
+    } else {
+      subsidyAmount = 78000;
+    }
+  }
+  const netCost = Math.max(0, estSystemCost - subsidyAmount);
   const estPaybackYears =
-    estAnnualSavings > 0
-      ? (estSystemCost / estAnnualSavings).toFixed(1)
-      : "3.5";
+    netCost > 0 && estAnnualSavings > 0
+      ? (netCost / estAnnualSavings).toFixed(1)
+      : (estSystemCost / estAnnualSavings).toFixed(1);
+
+  const co2SavingsTonnes = (recommendedKw * 1.2).toFixed(1);
+  const treesEquivalent = Math.round(recommendedKw * 20);
+
+  // Asynchronously record lead if phone is provided
+  const saveLeadSilently = async (phoneToSave, nameToSave) => {
+    if (!phoneToSave) return;
+    try {
+      await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: nameToSave || "Solar Calculator Lead",
+          phone: phoneToSave,
+          city: clientCity || undefined,
+          category: propertyType === "residential" ? "Residential" : propertyType === "commercial" ? "Commercial" : "Industrial",
+          monthlyBill: mode === "bill" ? billValue : Math.round(unitsValue * tariff),
+          message: `Generated Proposal for ${recommendedKw} kW (${propertyType}). Estimated savings: Rs. ${estAnnualSavings}/yr`,
+          consent: true,
+          source: "calculator",
+          language,
+        }),
+      });
+    } catch {
+      // Non-blocking silent catch
+    }
+  };
+
+  // Helper to get PDF doc
+  const buildPdfDoc = () => {
+    return generateSolarQuotationPdf({
+      clientName: clientName.trim() || "Valued Customer",
+      clientPhone: clientPhone.trim() || "Not specified",
+      city: clientCity.trim() || "Gurugram, Haryana",
+      propertyType,
+      billValue: mode === "bill" ? billValue : Math.round(unitsValue * tariff),
+      unitsValue: calculatedMonthlyUnits,
+      mode,
+      recommendedKw,
+      estMonthlyGeneration,
+      estAnnualSavings,
+      estPaybackYears,
+      estSystemCost,
+      subsidyAmount,
+      netCost,
+      panelsCount,
+      roofAreaSqFt,
+      co2SavingsTonnes,
+      treesEquivalent,
+    });
+  };
+
+  // Handle direct PDF Download
+  const handleDownloadPdf = () => {
+    setIsGeneratingPdf(true);
+    setActionSuccess(null);
+    setPhoneError("");
+
+    try {
+      const doc = buildPdfDoc();
+      const safeName = (clientName.trim() || "Customer").replace(/[^a-zA-Z0-9]/g, "_");
+      const filename = `AuraSun_Solar_Quotation_${safeName}_${recommendedKw}kW.pdf`;
+      doc.save(filename);
+
+      if (clientPhone.trim()) {
+        const phoneCheck = normalizeIndianPhone(clientPhone);
+        if (phoneCheck.isValid) {
+          saveLeadSilently(phoneCheck.normalized, clientName.trim());
+        }
+      }
+
+      setActionSuccess(
+        language === "hi"
+          ? `✓ आधिकारिक सोलर कोटेशन PDF (${filename}) डाउनलोड हो गया है!`
+          : `✓ Official Solar Proposal PDF (${filename}) downloaded successfully!`
+      );
+    } catch (err) {
+      console.error("PDF generation error:", err);
+    } finally {
+      setIsGeneratingPdf(false);
+    }
+  };
+
+  // Handle WhatsApp Sharing (without paid API)
+  const handleShareWhatsapp = async (target = "company") => {
+    setIsGeneratingPdf(true);
+    setActionSuccess(null);
+    setPhoneError("");
+
+    let targetPhone = siteConfig.company.whatsapp.replace(/\D/g, "");
+
+    if (target === "client") {
+      if (!clientPhone.trim()) {
+        setPhoneError(
+          language === "hi"
+            ? "कृपया ग्राहक का मोबाइल नंबर दर्ज करें ताकि उन्हें भेजा जा सके।"
+            : "Please enter client's 10-digit mobile number to send to their WhatsApp."
+        );
+        setIsGeneratingPdf(false);
+        return;
+      }
+      const phoneCheck = normalizeIndianPhone(clientPhone);
+      if (!phoneCheck.isValid) {
+        setPhoneError(
+          language === "hi"
+            ? "कृपया 10 अंकों का वैध भारतीय मोबाइल नंबर दर्ज करें।"
+            : "Please enter a valid 10-digit Indian mobile number."
+        );
+        setIsGeneratingPdf(false);
+        return;
+      }
+      targetPhone = phoneCheck.normalized.replace(/\D/g, "");
+    }
+
+    try {
+      // 1. Generate & download the PDF for the user
+      const doc = buildPdfDoc();
+      const safeName = (clientName.trim() || "Customer").replace(/[^a-zA-Z0-9]/g, "_");
+      const filename = `AuraSun_Solar_Quotation_${safeName}_${recommendedKw}kW.pdf`;
+      doc.save(filename);
+
+      // Save lead silently
+      if (clientPhone.trim()) {
+        const phoneCheck = normalizeIndianPhone(clientPhone);
+        if (phoneCheck.isValid) {
+          saveLeadSilently(phoneCheck.normalized, clientName.trim());
+        }
+      }
+
+      // 2. Prepare structured WhatsApp message
+      const sectorLabel = propertyType.charAt(0).toUpperCase() + propertyType.slice(1);
+      const messageLines = [
+        `🌞 *${siteConfig.company.name.toUpperCase()} - SOLAR ESTIMATE & PROPOSAL*`,
+        `─────────────────────────────`,
+        `👤 *Client Name:* ${clientName.trim() || "Valued Property Owner"}`,
+        `📱 *Mobile No:* ${clientPhone.trim() || "Not specified"}`,
+        `🏠 *Property Sector:* ${sectorLabel} Rooftop`,
+        `⚡ *Recommended Solar:* ${recommendedKw} kW On-Grid System`,
+        `☀️ *PV Modules:* ~${panelsCount}x 550W Tier-1 Panels`,
+        `📊 *Est. Monthly Generation:* ~${estMonthlyGeneration.toLocaleString("en-IN")} Units (kWh)`,
+        `💰 *Est. Annual Savings:* ₹${estAnnualSavings.toLocaleString("en-IN")} / year`,
+        propertyType === "residential"
+          ? `🏛️ *Govt. Subsidy (PM Surya Ghar):* ₹${subsidyAmount.toLocaleString("en-IN")}`
+          : `🏛️ *Tax Benefit:* 40% Accelerated Depreciation`,
+        `💵 *Net Estimated Cost:* ₹${netCost.toLocaleString("en-IN")}`,
+        `⏱️ *Payback Period:* ~${estPaybackYears} Years`,
+        `─────────────────────────────`,
+        `📎 *Detailed official PDF with company stamp & specifications has been downloaded to device.*`,
+        `🏢 *Office:* ${siteConfig.company.address}`,
+        `📞 *Helpline / WhatsApp:* ${siteConfig.company.displayPhone}`,
+      ];
+
+      const fullMessage = messageLines.join("\n");
+      const encodedMsg = encodeURIComponent(fullMessage);
+
+      // Mobile vs Desktop detection
+      const isMobile = typeof window !== "undefined" && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      
+      let waUrl = `https://wa.me/${targetPhone}?text=${encodedMsg}`;
+      if (isMobile) {
+        waUrl = `whatsapp://send?phone=${targetPhone}&text=${encodedMsg}`;
+      } else {
+        waUrl = `https://web.whatsapp.com/send?phone=${targetPhone}&text=${encodedMsg}`;
+      }
+
+      // Open WhatsApp in new tab/app
+      window.open(waUrl, "_blank", "noopener,noreferrer");
+
+      setActionSuccess(
+        language === "hi"
+          ? "✓ PDF डाउनलोड हो गया है और व्हाट्सएप खुल गया है! कोटेशन भेजने के लिए सेंड दबाएं।"
+          : "✓ PDF downloaded! WhatsApp is now open with your proposal summary. Simply hit send!"
+      );
+    } catch (err) {
+      console.error("WhatsApp share error:", err);
+    } finally {
+      setIsGeneratingPdf(false);
+    }
+  };
 
   return (
     <div className={`w-full max-w-5xl mx-auto ${standalone ? "" : "my-4"}`}>
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Column: Input Form Controls (7 cols) */}
+        {/* Left Column: Input Form Controls & Client Information (7 cols) */}
         <Card className="lg:col-span-7 bg-white shadow-card border-brand-border/80">
           <div className="flex items-center justify-between pb-4 border-b border-slate-100">
             <h3 className="text-lg sm:text-xl font-bold font-display text-brand-navy flex items-center gap-2">
@@ -193,35 +414,125 @@ export default function SolarCalculator({ standalone = false }) {
                 </p>
               )}
             </div>
+
+            {/* Client Details Section (for PDF Quotation & WhatsApp) */}
+            <div className="pt-4 border-t border-slate-200">
+              <h4 className="text-sm font-bold text-brand-navy flex items-center gap-2 mb-3">
+                <FileText className="w-4 h-4 text-brand-primary" />
+                <span>{t.calculator.clientDetailsHeading}</span>
+              </h4>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/* Client Name */}
+                <div>
+                  <label htmlFor="client-name" className="block text-xs font-semibold text-slate-700 mb-1">
+                    {t.calculator.clientNameLabel}
+                  </label>
+                  <div className="relative">
+                    <User className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
+                    <input
+                      id="client-name"
+                      type="text"
+                      placeholder={t.calculator.clientNamePlaceholder}
+                      value={clientName}
+                      onChange={(e) => setClientName(e.target.value)}
+                      className="w-full pl-9 pr-3 py-2 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-primary"
+                    />
+                  </div>
+                </div>
+
+                {/* Client Mobile Number */}
+                <div>
+                  <label htmlFor="client-phone" className="block text-xs font-semibold text-slate-700 mb-1">
+                    {t.calculator.clientPhoneLabel} *
+                  </label>
+                  <div className="relative">
+                    <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
+                    <input
+                      id="client-phone"
+                      type="tel"
+                      placeholder={t.calculator.clientPhonePlaceholder}
+                      value={clientPhone}
+                      onChange={(e) => {
+                        setClientPhone(e.target.value);
+                        if (phoneError) setPhoneError("");
+                      }}
+                      className={`w-full pl-9 pr-3 py-2 text-sm rounded-xl border ${
+                        phoneError ? "border-red-500 bg-red-50/30" : "border-slate-200"
+                      } focus:outline-none focus:ring-2 focus:ring-brand-primary`}
+                    />
+                  </div>
+                  {phoneError && <p className="text-xs text-red-600 mt-1">{phoneError}</p>}
+                </div>
+              </div>
+
+              {/* City / Location (Optional) */}
+              <div className="mt-3">
+                <label htmlFor="client-city" className="block text-xs font-semibold text-slate-700 mb-1">
+                  {t.calculator.clientCityLabel}
+                </label>
+                <div className="relative">
+                  <MapPin className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
+                  <input
+                    id="client-city"
+                    type="text"
+                    placeholder={t.calculator.clientCityPlaceholder}
+                    value={clientCity}
+                    onChange={(e) => setClientCity(e.target.value)}
+                    className="w-full pl-9 pr-3 py-2 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-primary"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </Card>
 
-        {/* Right Column: Calculated Results Card (5 cols) */}
+        {/* Right Column: Calculated Results Card & WhatsApp / PDF Actions (5 cols) */}
         <div className="lg:col-span-5 space-y-4">
-          <Card className="bg-brand-navy text-white shadow-xl border-slate-800 p-6 sm:p-8">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-brand-secondary mb-4">
-              {t.calculator.resultsHeading}
-            </h4>
+          {/* Main Dark Navy Results Card */}
+          <div
+            className="rounded-3xl text-white shadow-2xl p-6 sm:p-7 border border-slate-800 relative overflow-hidden"
+            style={{
+              backgroundColor: "#0B192C",
+              backgroundImage: "radial-gradient(ellipse at top right, rgba(0, 98, 255, 0.25) 0%, transparent 70%)",
+            }}
+          >
+            {/* Top Label */}
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-[11px] font-extrabold uppercase tracking-widest text-sky-400">
+                {t.calculator.resultsHeading}
+              </span>
+              <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2 py-0.5 rounded-full">
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>Tier-1 Approved</span>
+              </span>
+            </div>
 
-            {/* Main Hero Metric: Recommended kW */}
-            <div className="pb-6 border-b border-slate-800">
-              <span className="text-xs text-slate-400 block mb-1">
+            {/* Recommended System Size (Big Display) */}
+            <div className="pb-5 border-b border-slate-800/80">
+              <span className="text-xs text-slate-300 block mb-1">
                 {t.calculator.systemSize}
               </span>
               <div className="flex items-baseline gap-2">
-                <span className="text-4xl sm:text-5xl font-extrabold tracking-tight font-display text-white">
+                <span className="text-4xl sm:text-5xl font-black tracking-tight font-display text-white">
                   {recommendedKw}
                 </span>
-                <span className="text-lg font-bold text-brand-secondary">
+                <span className="text-xl font-extrabold text-sky-400">
                   {t.calculator.kwUnit}
                 </span>
               </div>
+              <p className="text-xs text-slate-400 mt-1.5 flex items-center gap-1.5">
+                <Sun className="w-3.5 h-3.5 text-amber-400" />
+                <span>
+                  ~{panelsCount} {t.calculator.panelsCountValue} • ~{roofAreaSqFt} sq. ft.
+                </span>
+              </p>
             </div>
 
-            {/* Metric Breakdown Grid */}
-            <div className="py-5 space-y-4 border-b border-slate-800">
+            {/* Key Metrics Breakdown */}
+            <div className="py-4 space-y-3.5 border-b border-slate-800/80 text-xs">
               <div className="flex items-center justify-between">
-                <span className="text-xs text-slate-300 flex items-center gap-1.5">
+                <span className="text-slate-300 flex items-center gap-1.5">
                   <Sun className="w-4 h-4 text-amber-400" />
                   {t.calculator.monthlyGeneration}
                 </span>
@@ -231,7 +542,7 @@ export default function SolarCalculator({ standalone = false }) {
               </div>
 
               <div className="flex items-center justify-between">
-                <span className="text-xs text-slate-300 flex items-center gap-1.5">
+                <span className="text-slate-300 flex items-center gap-1.5">
                   <IndianRupee className="w-4 h-4 text-emerald-400" />
                   {t.calculator.annualSavings}
                 </span>
@@ -240,9 +551,31 @@ export default function SolarCalculator({ standalone = false }) {
                 </span>
               </div>
 
+              {propertyType === "residential" ? (
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-300 flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4 text-sky-400" />
+                    {t.calculator.subsidyLabel}
+                  </span>
+                  <span className="text-sm font-extrabold text-sky-300">
+                    ₹{subsidyAmount.toLocaleString("en-IN")}
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-300 flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4 text-sky-400" />
+                    Tax Benefit
+                  </span>
+                  <span className="text-sm font-bold text-sky-300">
+                    40% Depreciation
+                  </span>
+                </div>
+              )}
+
               <div className="flex items-center justify-between">
-                <span className="text-xs text-slate-300 flex items-center gap-1.5">
-                  <Clock className="w-4 h-4 text-sky-400" />
+                <span className="text-slate-300 flex items-center gap-1.5">
+                  <Clock className="w-4 h-4 text-amber-300" />
                   {t.calculator.paybackPeriod}
                 </span>
                 <span className="text-sm font-bold text-white">
@@ -251,20 +584,70 @@ export default function SolarCalculator({ standalone = false }) {
               </div>
             </div>
 
-            {/* Direct CTA to Quote Page with preselected kW */}
-            <div className="pt-6">
+            {/* Action Buttons: PDF & WhatsApp */}
+            <div className="pt-5 space-y-2.5">
+              {/* WhatsApp Share Button */}
+              <button
+                type="button"
+                onClick={() => handleShareWhatsapp("company")}
+                disabled={isGeneratingPdf}
+                className="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#1EBE5D] text-white font-bold py-3 px-4 rounded-xl shadow-lg transition-all text-sm min-h-[44px]"
+              >
+                <Share2 className="w-4 h-4" />
+                <span>
+                  {isGeneratingPdf
+                    ? t.calculator.generatingPdf
+                    : t.calculator.shareCompanyWhatsapp}
+                </span>
+              </button>
+
+              {/* Send to Client WhatsApp button (if client phone is filled) */}
+              {clientPhone.trim() && (
+                <button
+                  type="button"
+                  onClick={() => handleShareWhatsapp("client")}
+                  disabled={isGeneratingPdf}
+                  className="w-full flex items-center justify-center gap-2 bg-emerald-900/80 hover:bg-emerald-800 text-emerald-200 border border-emerald-500/40 font-bold py-2.5 px-4 rounded-xl transition-all text-xs min-h-[40px]"
+                >
+                  <Phone className="w-3.5 h-3.5" />
+                  <span>{t.calculator.shareClientWhatsapp} ({clientPhone.trim()})</span>
+                </button>
+              )}
+
+              {/* Direct Download Official PDF Proposal */}
+              <button
+                type="button"
+                onClick={handleDownloadPdf}
+                disabled={isGeneratingPdf}
+                className="w-full flex items-center justify-center gap-2 bg-white hover:bg-slate-100 text-brand-navy font-bold py-2.5 px-4 rounded-xl shadow transition-all text-xs min-h-[44px]"
+              >
+                <Download className="w-4 h-4 text-brand-primary" />
+                <span>{t.calculator.downloadPdfCta}</span>
+              </button>
+
+              {/* Link to Full Quote */}
               <Button
-                href={`/quote?kw=${recommendedKw}&bill=${mode === "bill" ? billValue : Math.round(unitsValue * tariff)}&type=${propertyType}`}
-                variant="primary"
-                className="w-full justify-between"
+                href={`/quote?kw=${recommendedKw}&bill=${
+                  mode === "bill" ? billValue : Math.round(unitsValue * tariff)
+                }&type=${propertyType}&name=${encodeURIComponent(clientName)}&phone=${encodeURIComponent(clientPhone)}`}
+                variant="outline"
+                className="w-full justify-between !border-slate-700 !text-slate-200 hover:!bg-slate-800/80 !text-xs !py-2.5"
               >
                 <span>{t.calculator.quoteCta}</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-3.5 h-3.5" />
               </Button>
             </div>
-          </Card>
+          </div>
 
-          {/* Official Subsidy Note (driven by siteConfig) */}
+          {/* Action Success Toast / Feedback */}
+          {actionSuccess && (
+            <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-300 text-xs text-emerald-800 font-medium flex items-start gap-2 shadow-sm animate-fade-in">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
+              <span>{actionSuccess}</span>
+            </div>
+          )}
+
+          {/* Official Subsidy Note */}
           {calcConfig.showSubsidyNote && (
             <div className="p-4 rounded-2xl bg-blue-50/80 border border-blue-200/60 text-xs text-slate-700 leading-relaxed">
               <p className="font-semibold text-brand-navy flex items-start gap-1.5 mb-1.5">

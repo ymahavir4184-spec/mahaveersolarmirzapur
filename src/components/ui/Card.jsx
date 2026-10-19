@@ -17,9 +17,14 @@ export default function Card({
     ? "transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lg hover:shadow-slate-200/70 hover:border-blue-200/60 cursor-pointer"
     : "";
 
+  const hasBg = className.includes("bg-");
+  const hasBorder = className.includes("border-");
+  const baseBg = hasBg ? "" : "bg-white";
+  const baseBorder = hasBorder ? "" : "border border-slate-200/70";
+
   return (
     <Component
-      className={`bg-white rounded-2xl border border-slate-200/70 shadow-sm ${paddingStyles[padding] || paddingStyles.md} ${hoverStyles} ${className}`}
+      className={`rounded-2xl shadow-sm ${baseBg} ${baseBorder} ${paddingStyles[padding] || paddingStyles.md} ${hoverStyles} ${className}`}
       {...props}
     >
       {children}
