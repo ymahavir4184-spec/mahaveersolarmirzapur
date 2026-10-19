@@ -1,0 +1,23 @@
+
+    <svg width="240" height="60" viewBox="0 0 240 60" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#0062FF" />
+          <stop offset="100%" stop-color="#0EA5E9" />
+        </linearGradient>
+      </defs>
+      <!-- Sun + Panel Icon -->
+      <g transform="translate(10, 8)">
+        <circle cx="22" cy="22" r="20" fill="url(#logoGrad)" />
+        <path d="M12 22 L32 22 M22 12 L22 32 M15 15 L29 29 M15 29 L29 15" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" />
+        <polygon points="14,24 30,24 28,31 16,31" fill="#FFFFFF" opacity="0.9" />
+      </g>
+      <!-- Text -->
+      <text x="62" y="32" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="800" fill="#0B192C" letter-spacing="-0.5">
+        Aura<tspan fill="#0062FF">Sun</tspan>
+      </text>
+      <text x="63" y="46" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="600" fill="#64748B" letter-spacing="1.5">
+        SOLAR ENERGY
+      </text>
+    </svg>
+  
