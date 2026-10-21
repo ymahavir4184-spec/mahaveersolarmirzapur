@@ -229,8 +229,8 @@ export default function EstimateRecords({ lang = "hi", onBack }) {
             <p className="mt-2 break-all text-sm font-semibold text-slate-700">{deleteTarget.estimate_number} · {deleteTarget.customer_name}</p>
             <p className="mt-2 text-sm text-slate-600">{hi ? "Estimate permanently remove hoga. Sirf receipt, customer, amount, staff ID aur delete time ka compact log rahega; full recovery copy nahi banegi." : "This estimate will be removed permanently. Only a compact receipt, customer, amount, staff ID, and deletion-time log is kept; no recovery copy is made."}</p>
           </div>
-          <label className="block text-sm font-semibold text-slate-700">{hi ? "Delete ke liye master password (max 10 characters)" : "Enter the master password for the delete (up to 10 characters)"}
-            <input type="password" autoComplete="new-password" required maxLength={10} value={deletePassword} onChange={(event) => setDeletePassword(event.target.value)} className="mt-1.5 min-h-11 w-full rounded-lg border border-slate-300 px-3 text-sm" />
+          <label className="block text-sm font-semibold text-slate-700">{hi ? "Delete ke liye master password (max 128 characters)" : "Enter the master password for the delete (up to 128 characters)"}
+            <input type="password" autoComplete="new-password" required maxLength={128} value={deletePassword} onChange={(event) => setDeletePassword(event.target.value)} className="mt-1.5 min-h-11 w-full rounded-lg border border-slate-300 px-3 text-sm" />
           </label>
           <label className="block text-sm font-semibold text-slate-700">{hi ? "पुष्टि के लिए Estimate नंबर फिर से लिखें" : "Type the estimate number to confirm"}
             <input type="text" autoComplete="off" required value={deleteConfirmation} onChange={(event) => setDeleteConfirmation(event.target.value)} className="mt-1.5 min-h-11 w-full rounded-lg border border-slate-300 px-3 text-sm" />

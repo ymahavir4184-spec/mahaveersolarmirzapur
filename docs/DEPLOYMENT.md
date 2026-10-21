@@ -17,7 +17,7 @@ This platform is optimized for seamless zero-downtime deployment on [Vercel](htt
    - `SUPABASE_URL`: The client's Supabase project URL
    - `SUPABASE_SECRET_KEY`: The client's Supabase Secret key (`sb_secret_...`); legacy projects can use `SUPABASE_SERVICE_ROLE_KEY`
    - `QUOTATION_LOGIN_ID`, `QUOTATION_LOGIN_PASSWORD`: Private staff portal credentials, each 1–10 characters
-   - `ESTIMATE_DELETE_MASTER_PASSWORD`: Private value of 1–10 characters. It is checked server-side, and an active staff session plus estimate-number confirmation are required. Never commit it or add a `NEXT_PUBLIC_` prefix.
+   - `ESTIMATE_DELETE_MASTER_PASSWORD`: Private value of 1–128 characters. It is checked server-side, and an active staff session plus estimate-number confirmation are required. Never commit it or add a `NEXT_PUBLIC_` prefix.
    - `COMPANY_GSTIN`: (Optional) Company's registered GSTIN; required to charge GST
    - `COMPANY_BANK_ACCOUNT`: (Optional) Account number printed on invoices
    - `BILL_NUMBER_PREFIX`: (Optional) Invoice number prefix, defaults to `ME`

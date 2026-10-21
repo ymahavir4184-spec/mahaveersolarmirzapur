@@ -22,8 +22,8 @@ export async function POST(request) {
   if (!isSupabaseConfigured()) return json({ success: false, message: getSupabaseConfigurationMessage() }, 503);
 
   const expectedPassword = process.env.ESTIMATE_DELETE_MASTER_PASSWORD;
-  if (!expectedPassword || expectedPassword.length > 10) {
-    return json({ success: false, message: "Set ESTIMATE_DELETE_MASTER_PASSWORD to a value of 1 to 10 characters in .env.local, then restart the server. For production, set it in the hosting environment and redeploy." }, 503);
+  if (!expectedPassword || expectedPassword.length > 128) {
+    return json({ success: false, message: "Set ESTIMATE_DELETE_MASTER_PASSWORD to a value of 1 to 128 characters in .env.local, then restart the server. For production, set it in the hosting environment and redeploy." }, 503);
   }
 
   const contentLength = Number(request.headers.get("content-length") || 0);
@@ -39,7 +39,7 @@ export async function POST(request) {
   const estimateId = typeof body?.estimateId === "string" ? body.estimateId : "";
   const masterPassword = typeof body?.masterPassword === "string" ? body.masterPassword : "";
   const confirmation = typeof body?.confirmation === "string" ? body.confirmation : "";
-  if (!validUuid(estimateId) || masterPassword.length > 10 || confirmation.length > 160) {
+  if (!validUuid(estimateId) || masterPassword.length > 128 || confirmation.length > 160) {
     return json({ success: false, message: "Invalid delete request." }, 400);
   }
 

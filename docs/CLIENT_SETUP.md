@@ -69,13 +69,13 @@ SUPABASE_SECRET_KEY="sb_secret_your-secret-key"
 # SUPABASE_SERVICE_ROLE_KEY="your-legacy-service-role-key"
 QUOTATION_LOGIN_ID="your-id-10"
 QUOTATION_LOGIN_PASSWORD="your-pass9"
-ESTIMATE_DELETE_MASTER_PASSWORD="your-private-value-up-to-10-chars"
+ESTIMATE_DELETE_MASTER_PASSWORD="your-private-value-up-to-128-chars"
 COMPANY_GSTIN="registered-business-gstin"
 COMPANY_BANK_ACCOUNT="account-number-printed-on-invoices"
 BILL_NUMBER_PREFIX="ME"
 ESTIMATE_NUMBER_PREFIX="ME"
 ```
-Set the staff login ID, staff password, and estimate-delete master password to private values of 1–10 characters each; keep the delete password distinct from the staff password. The login fields accept up to 10 characters. Deletion also requires an active staff session and estimate-number confirmation. Keep `.env.local` out of source control and set the private values in the hosting provider too. The delete password is only checked by the server and is not stored in the database.
+Set the staff login ID and staff password to private values of 1–10 characters. Set the estimate-delete master password to a private value of 1–128 characters, distinct from the staff password. The login fields accept up to 10 characters. Deletion also requires an active staff session and estimate-number confirmation. Keep `.env.local` out of source control and set the private values in the hosting provider too. The delete password is only checked by the server and is not stored in the database.
 
 The legal billing profile is configured in `src/config/site.js`. Keep `COMPANY_GSTIN` and `COMPANY_BANK_ACCOUNT` in server-side environment variables only; do not add either with a `NEXT_PUBLIC_` prefix.
 
