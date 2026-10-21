@@ -7,28 +7,40 @@ const AUDIO_SOURCE = "/audio/mahaveer-enterprises-intro.mp3";
 export default function SiteAudio() {
   useEffect(() => {
     let audio = null;
+    let attemptPending = false;
+    let playbackStarted = false;
 
     const startOnInteraction = () => {
-      window.removeEventListener("pointerdown", startOnInteraction);
-      window.removeEventListener("keydown", startOnInteraction);
-
       if (!audio) {
         audio = new Audio(AUDIO_SOURCE);
         audio.preload = "none";
         audio.volume = 1;
       }
-      if (audio.paused) {
-        audio.currentTime = 0;
-        audio.play().catch(() => {});
-      }
+
+      if (playbackStarted || attemptPending || !audio.paused) return;
+
+      attemptPending = true;
+      audio.play().then(() => {
+        playbackStarted = true;
+        removeInteractionListeners();
+      }).catch(() => {
+        // Mobile browsers may reject a play attempt; keep waiting for another tap.
+        attemptPending = false;
+      });
+    };
+
+    const removeInteractionListeners = () => {
+      window.removeEventListener("pointerdown", startOnInteraction);
+      window.removeEventListener("click", startOnInteraction);
+      window.removeEventListener("keydown", startOnInteraction);
     };
 
     window.addEventListener("pointerdown", startOnInteraction);
+    window.addEventListener("click", startOnInteraction);
     window.addEventListener("keydown", startOnInteraction);
 
     return () => {
-      window.removeEventListener("pointerdown", startOnInteraction);
-      window.removeEventListener("keydown", startOnInteraction);
+      removeInteractionListeners();
       if (audio) {
         audio.pause();
         audio.removeAttribute("src");
