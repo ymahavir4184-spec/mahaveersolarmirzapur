@@ -5,9 +5,13 @@ Complete each of the verification steps below before handing over the live websi
 ---
 
 ## 1. Credentials & Backend Verification
-- [ ] **Supabase Setup**: Real Supabase project created; `supabase/schema.sql` executed; table `leads` exists with RLS enabled.
-- [ ] **Environment Variables**: `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` set in Vercel. Ensure `NEXT_PUBLIC_` prefix was NOT used on the service role key.
+- [ ] **Supabase Setup**: Current `supabase/setup.sql` applied (or all ordered migrations through `20261021000800_remove_rate_limits.sql`); `leads`, `quotations`, `bills`, `bill_items`, `estimates`, `estimate_deletion_log`, and `staff_sessions` exist with RLS enabled; create/report/session/delete-audit RPC functions exist.
+- [ ] **Environment Variables**: `SUPABASE_URL`, `SUPABASE_SECRET_KEY` (or legacy `SUPABASE_SERVICE_ROLE_KEY`), `QUOTATION_LOGIN_ID`, `QUOTATION_LOGIN_PASSWORD`, and `ESTIMATE_DELETE_MASTER_PASSWORD` set in Vercel. Ensure private keys do not use a `NEXT_PUBLIC_` prefix.
 - [ ] **End-to-End Form Test**: Submitted a test enquiry through `/quote`, `/contact`, and the lead popup. Verified the lead appears in the Supabase Table Editor.
+- [ ] **Concurrent Staff Use**: Created a test bill/estimate on one device while another device had its records page open; confirmed each document number is unique, data appears after refresh, and no customer/item rows are missing.
+- [ ] **Staff Session Security**: Confirmed refresh/tab close asks for staff login again, inactivity signs out after 30 minutes, active work renews the idle window, and logout in one tab closes sibling tabs.
+- [ ] **Report Export**: Downloaded bill and estimate CSV exports in Excel and checked document fields, seller snapshot, GST splits, totals, and all item rows.
+- [ ] **Estimate Delete Audit**: Confirmed wrong master passwords are rejected, estimate-number confirmation is required, a successful deletion removes the active row, and only receipt/customer/amount/staff-ID/time metadata appears in `estimate_deletion_log`.
 - [ ] **WhatsApp Click-to-Chat**: Clicked the WhatsApp floating button and post-submission button on both mobile and desktop. Confirmed the correct phone number and prefilled message open in WhatsApp.
 - [ ] **Clickable Telephone**: Confirmed `tel:+91...` initiates a phone call on mobile devices without formatting errors.
 

@@ -205,10 +205,10 @@ export default function HeroSection() {
 
               {/* Main image frame */}
               <FloatingCard delay={0.3} className="relative">
-                <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white ring-1 ring-slate-200/60">
+                <div className="relative aspect-[16/9] rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white ring-1 ring-slate-200/60">
                   <SmartImage
-                    src={siteConfig.assets.hero}
-                    alt={`${siteConfig.company.name} solar panel rooftop installation`}
+                    src={siteConfig.assets.dashboardHero}
+                    alt="Mahaveer Enterprises solar energy solutions in Mirzapur"
                     fill
                     priority
                     sizes="(max-width: 1024px) 100vw, 42vw"
@@ -222,7 +222,7 @@ export default function HeroSection() {
               {/* Floating: MNRE badge */}
               <FloatingCard
                 delay={0.55}
-                className="absolute -bottom-5 -left-2 sm:-left-6 z-10"
+                className="relative mt-3 w-fit max-w-full z-10 sm:absolute sm:mt-0 sm:-bottom-5 sm:-left-6"
               >
                 <div className="glass-card px-4 py-3 rounded-2xl shadow-elevated flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-blue-50 text-brand-primary flex items-center justify-center flex-shrink-0">
@@ -238,7 +238,7 @@ export default function HeroSection() {
               {/* Floating: Generation stat badge */}
               <FloatingCard
                 delay={0.7}
-                className="absolute -top-4 -right-2 sm:-right-5 z-10"
+                className="relative mt-3 ml-auto w-fit max-w-full z-10 sm:absolute sm:mt-0 sm:ml-0 sm:-top-4 sm:-right-5"
               >
                 <div className="glass-card px-4 py-3 rounded-2xl shadow-elevated flex items-center gap-2.5">
                   <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0">

@@ -4,7 +4,7 @@ import Container from "@/components/ui/Container";
 import Section from "@/components/ui/Section";
 
 export const metadata = {
-  title: "Terms & Conditions | AuraSun Solar Solutions",
+  title: `Terms & Conditions | ${siteConfig.company.name}`,
   description: `Terms and conditions of website use and solar estimation services for ${siteConfig.company.name}.`,
 };
 

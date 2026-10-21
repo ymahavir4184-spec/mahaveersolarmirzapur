@@ -14,8 +14,8 @@ export default function HomeContactSection() {
   const rawPhone = siteConfig.company.whatsapp.replace(/\D/g, "");
   const whatsappHref = `https://wa.me/${rawPhone}?text=${encodeURIComponent(
     language === "hi"
-      ? "नमस्ते औरासन सोलर, मैं रूफटॉप सोलर लगाने के बारे में परामर्श चाहता हूँ।"
-      : "Hello AuraSun Solar, I would like to schedule a solar consultation for my property."
+      ? `नमस्ते ${siteConfig.company.name}, मैं रूफटॉप सोलर लगाने के बारे में परामर्श चाहता हूँ।`
+      : `Hello ${siteConfig.company.name}, I would like to schedule a solar consultation for my property.`
   )}`;
 
   const businessHours =

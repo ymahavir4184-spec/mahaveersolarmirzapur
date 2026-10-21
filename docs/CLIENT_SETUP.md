@@ -53,20 +53,31 @@ NEXT_PUBLIC_SITE_URL="https://clientdomain.com"
 ### Step 6: Set Up Supabase Database
 1. Create a free account and project at [Supabase](https://supabase.com).
 2. Open the **SQL Editor** in your new project dashboard.
-3. Open `supabase/schema.sql` from this repository, paste the contents into the editor, and click **Run**.
+3. Open the current `supabase/setup.sql`, paste the whole file into SQL Editor, and click **Run** once. It creates or safely updates the leads, quotations, bill and estimate tables/functions, optional document fields, staff sessions, and compact estimate-deletion audit log. For SQL Editor users, use this full setup file rather than running individual migrations alongside it.
 4. Navigate to **Project Settings -> API**:
    - Copy **Project URL**
-   - Copy **service_role** secret key (under Project API keys)
+   - Copy the **Secret key** (`sb_secret_...`) from API Keys. If the project only has legacy keys, use its `service_role` key instead.
+5. Keep the secret key private. Never use a `NEXT_PUBLIC_` prefix or commit it to Git.
 
 ### Step 7: Configure Environment Variables
 Create `.env.local` for local testing and set the following in your hosting provider (e.g. Vercel):
 ```env
 NEXT_PUBLIC_SITE_URL="https://clientdomain.com"
 SUPABASE_URL="https://your-project.supabase.co"
-SUPABASE_SERVICE_ROLE_KEY="your-service-role-secret-key"
-UPSTASH_REDIS_REST_URL="" # Optional
-UPSTASH_REDIS_REST_TOKEN="" # Optional
+SUPABASE_SECRET_KEY="sb_secret_your-secret-key"
+# Legacy-key fallback, only if no Secret key is available:
+# SUPABASE_SERVICE_ROLE_KEY="your-legacy-service-role-key"
+QUOTATION_LOGIN_ID="your-id-10"
+QUOTATION_LOGIN_PASSWORD="your-pass9"
+ESTIMATE_DELETE_MASTER_PASSWORD="your-private-value-up-to-10-chars"
+COMPANY_GSTIN="registered-business-gstin"
+COMPANY_BANK_ACCOUNT="account-number-printed-on-invoices"
+BILL_NUMBER_PREFIX="ME"
+ESTIMATE_NUMBER_PREFIX="ME"
 ```
+Set the staff login ID, staff password, and estimate-delete master password to private values of 1–10 characters each; keep the delete password distinct from the staff password. The login fields accept up to 10 characters. Deletion also requires an active staff session and estimate-number confirmation. Keep `.env.local` out of source control and set the private values in the hosting provider too. The delete password is only checked by the server and is not stored in the database.
+
+The legal billing profile is configured in `src/config/site.js`. Keep `COMPANY_GSTIN` and `COMPANY_BANK_ACCOUNT` in server-side environment variables only; do not add either with a `NEXT_PUBLIC_` prefix.
 
 ### Step 8: Deploy on Vercel
 1. Import the Git repository into Vercel.
@@ -76,6 +87,9 @@ UPSTASH_REDIS_REST_TOKEN="" # Optional
 5. Once deployed, add the custom production domain under **Settings -> Domains** and configure the required DNS records (`A` and `CNAME`).
 
 ### Step 9: Post-Deployment Verification
+- Verify the `leads`, `quotations`, `bills`, `bill_items`, `estimates`, `estimate_deletion_log`, and `staff_sessions` tables exist with RLS enabled, and the billing/estimate create, report, session, and delete/audit functions are present.
+- Open the Bill Records and Estimate Records pages on two devices; newly saved rows should appear after refresh or within 30 seconds.
+- Download both CSV exports in Excel and verify their header rows, GST breakdowns, optional invoice fields, and every product line.
 - Submit a test lead through `/quote` and verify the lead row appears in the Supabase `leads` table.
 - Test the language toggle between English and Hindi on desktop and mobile.
 - Verify that WhatsApp prefilled links open properly.

@@ -174,9 +174,9 @@ async function runTestSuite() {
   // 9. WhatsApp Pre-fill Encoding
   console.log('\n9. Testing WhatsApp Link Encoding...');
   const rawWhatsApp = siteConfig.company.whatsapp.replace(/\D/g, '');
-  const sampleMsg = 'Hello AuraSun Solar, I would like a quote.';
+  const sampleMsg = `Hello ${siteConfig.company.name}, I would like a quote.`;
   const waUrl = `https://wa.me/${rawWhatsApp}?text=${encodeURIComponent(sampleMsg)}`;
-  assert(waUrl.includes('https://wa.me/919876543210?text=Hello%20AuraSun'), 'WhatsApp link properly encoded');
+  assert(waUrl.includes('https://wa.me/919452216034?text=Hello%20Mahaveer'), 'WhatsApp link properly encoded');
 
   // 10. Sitemap & Robots
   console.log('\n10. Testing Sitemap and Robots.txt...');

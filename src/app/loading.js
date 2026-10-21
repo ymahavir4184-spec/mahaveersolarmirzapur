@@ -4,7 +4,7 @@ export default function Loading() {
       <div className="flex flex-col items-center gap-4">
         <div className="w-10 h-10 border-4 border-blue-100 border-t-brand-primary rounded-full animate-spin" />
         <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-          Loading AuraSun Solar...
+          Loading Mahaveer Enterprises...
         </span>
       </div>
     </div>

@@ -5,7 +5,7 @@ import Section from "@/components/ui/Section";
 import Card from "@/components/ui/Card";
 
 export const metadata = {
-  title: "Privacy Policy | AuraSun Solar Solutions",
+  title: `Privacy Policy | ${siteConfig.company.name}`,
   description: `Privacy policy and customer data handling practices for ${siteConfig.company.name}.`,
 };
 

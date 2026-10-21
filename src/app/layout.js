@@ -5,8 +5,10 @@ import { siteConfig } from "@/config/site";
 import "@/config/validateConfig";
 import { LanguageProvider } from "@/lib/LanguageContext";
 import Navbar from "@/components/layout/Navbar";
+import ScrollToTop from "@/components/layout/ScrollToTop";
 import Footer from "@/components/layout/Footer";
 import FloatingActions from "@/components/layout/FloatingActions";
+import SiteAudio from "@/components/layout/SiteAudio";
 import LanguageOverlay from "@/components/modals/LanguageOverlay";
 import LeadPopup from "@/components/modals/LeadPopup";
 
@@ -91,8 +93,11 @@ export default async function RootLayout({ children }) {
     address: {
       "@type": "PostalAddress",
       streetAddress: siteConfig.company.address,
+      addressLocality: "Mirzapur",
+      addressRegion: siteConfig.company.stateName,
       addressCountry: "IN",
     },
+    legalName: siteConfig.company.legalName,
     openingHoursSpecification: [
       {
         "@type": "OpeningHoursSpecification",
@@ -119,6 +124,7 @@ export default async function RootLayout({ children }) {
       </head>
       <body className="font-sans antialiased min-h-screen flex flex-col bg-white text-slate-900">
         <LanguageProvider initialLanguage={initialLang} initialChosen={initialChosen}>
+          <ScrollToTop />
           {/* First visit language selection overlay */}
           {siteConfig.features.languageSelection && <LanguageOverlay />}
 
@@ -135,6 +141,9 @@ export default async function RootLayout({ children }) {
 
           {/* Floating Actions (WhatsApp + Phone) */}
           <FloatingActions />
+
+          {/* Site intro audio: restarts on each full page load */}
+          <SiteAudio />
 
           {/* Global Footer */}
           <Footer />

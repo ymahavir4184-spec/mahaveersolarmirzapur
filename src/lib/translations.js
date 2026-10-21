@@ -20,6 +20,7 @@ export const translations = {
       contact: "Contact Us",
       getQuote: "Get Free Quote",
       clientPortal: "Client Portal",
+      pmSuryaGharLogin: "PM Surya Ghar Login",
     },
 
     buttons: {
@@ -115,7 +116,7 @@ export const translations = {
         viewCaseStudy: "View Project Details",
       },
       whyUs: {
-        badge: "The AuraSun Advantage",
+        badge: "The Mahaveer Enterprises Advantage",
         title: "Why Property Owners Choose Us",
         subtitle: "Precision engineering, transparent pricing, and relentless post-installation support.",
         points: [
@@ -188,7 +189,7 @@ export const translations = {
       },
       city: {
         label: "City / District",
-        placeholder: "e.g. Gurugram, Delhi NCR",
+        placeholder: "e.g. Bharuhana, Mirzapur, UP",
       },
       propertyType: {
         label: "Property Type",
@@ -211,7 +212,7 @@ export const translations = {
         placeholder: "Mention approximate roof area, specific inverter preference, or questions...",
       },
       consent: {
-        prefix: "I consent to AuraSun contacting me via Phone/WhatsApp for this solar consultation as detailed in the ",
+        prefix: "I consent to Mahaveer Enterprises contacting me via Phone/WhatsApp for this solar consultation as detailed in the ",
         privacyLink: "Privacy Policy",
         suffix: ".",
       },
@@ -266,7 +267,7 @@ export const translations = {
       clientPhoneLabel: "Client Mobile / WhatsApp Number",
       clientPhonePlaceholder: "10-digit mobile number",
       clientCityLabel: "Location / City (Optional)",
-      clientCityPlaceholder: "e.g. Gurugram, Haryana",
+      clientCityPlaceholder: "e.g. Bharuhana, Mirzapur",
       downloadPdfCta: "Download Official Proposal PDF",
       shareCompanyWhatsapp: "Send to Company WhatsApp",
       shareClientWhatsapp: "Send to Client WhatsApp",
@@ -292,10 +293,20 @@ export const translations = {
       subtitle:
         "Enter your contact details and our certified solar engineer will share a customized 3D design and payback forecast within 2 hours.",
       skip: "Skip, continue browsing the website",
+      skipButton: "Skip for Now",
+      submitWhatsapp: "Send Details on WhatsApp",
+      cityLabel: "City / District (Optional)",
+      cityPlaceholder: "e.g. Mirzapur, UP",
+      whatsappOpenedTitle: "Opening WhatsApp with Your Details...",
+      whatsappOpenedDesc:
+        "Your rooftop solar enquiry has been pre-formatted for Mahaveer Enterprises. Tap 'Send' inside WhatsApp to connect immediately!",
+      reopenWhatsapp: "Re-open WhatsApp Chat",
+      closeButton: "Close Window",
+      instantBadge: "⚡ Free Feasibility & Subsidy Guidance",
     },
 
     overlay: {
-      heading: "Welcome to AuraSun Solar Solutions",
+      heading: "Welcome to Mahaveer Enterprises",
       subheading: "Please select your preferred language / कृपया अपनी पसंदीदा भाषा चुनें",
       enButton: "Continue in English",
       hiButton: "हिंदी में आगे बढ़ें",
@@ -315,7 +326,7 @@ export const translations = {
 
     footer: {
       aboutCompany:
-        "AuraSun Solar is an engineering-driven solar EPC provider committed to delivering reliable rooftop solar power plants for residential, commercial, and industrial facilities across India.",
+        "Mahaveer Enterprises is a leading solar EPC provider based in Bharuhana, Mirzapur, committed to delivering high-efficiency rooftop solar power plants for residential homes, commercial businesses, and industrial facilities across Mirzapur & Purvanchal.",
       quickLinks: "Quick Links",
       solarServices: "Solar Services",
       contactInfo: "Contact Information",
@@ -346,6 +357,7 @@ export const translations = {
       contact: "संपर्क करें",
       getQuote: "फ्री कोटेशन पाएं",
       clientPortal: "ग्राहक पोर्टल",
+      pmSuryaGharLogin: "PM Surya Ghar Login",
     },
 
     buttons: {
@@ -618,10 +630,20 @@ export const translations = {
       subtitle:
         "अपना मोबाइल नंबर दर्ज करें और हमारे प्रमाणित सोलर इंजीनियर 2 घंटे के भीतर आपकी छत का 3D डिजाइन और बचत रिपोर्ट साझा करेंगे।",
       skip: "छोड़ें, वेबसाइट देखते रहें",
+      skipButton: "अभी छोड़ें",
+      submitWhatsapp: "व्हाट्सएप पर विवरण भेजें",
+      cityLabel: "शहर / जिला (वैकल्पिक)",
+      cityPlaceholder: "उदा. रमईपट्टी, मिर्जापुर",
+      whatsappOpenedTitle: "व्हाट्सएप चैट खुल रही है...",
+      whatsappOpenedDesc:
+        "महावीर एंटरप्राइजेज के लिए आपका सौर विवरण तैयार है। तुरंत जुड़ने के लिए बस व्हाट्सएप में 'Send' बटन दबाएं!",
+      reopenWhatsapp: "व्हाट्सएप पुनः खोलें",
+      closeButton: "विंडो बंद करें",
+      instantBadge: "⚡ निःशुल्क फिजिबिलिटी और सरकारी सब्सिडी सहायता",
     },
 
     overlay: {
-      heading: "औरासन सोलर सॉल्यूशंस में आपका स्वागत है",
+      heading: "महावीर एंटरप्राइजेज (मिर्जापुर) में आपका स्वागत है",
       subheading: "कृपया अपनी पसंदीदा भाषा चुनें / Please select your preferred language",
       enButton: "Continue in English",
       hiButton: "हिंदी में आगे बढ़ें",
@@ -641,7 +663,7 @@ export const translations = {
 
     footer: {
       aboutCompany:
-        "औरासन सोलर एक विश्वसनीय सोलर ईपीसी कंपनी है जो पूरे भारत में आवासीय, व्यावसायिक और औद्योगिक परिसरों के लिए उच्च दक्षता वाले सौर ऊर्जा संयंत्र स्थापित करती है।",
+        "महावीर एंटरप्राइजेज, भरुहना मिर्जापुर में स्थित एक अग्रणी सोलर ईपीसी कंपनी है जो मिर्जापुर और पूर्वांचल में आवासीय, व्यावसायिक और औद्योगिक परिसरों के लिए उच्च दक्षता वाले सौर ऊर्जा संयंत्र स्थापित करती है।",
       quickLinks: "महत्वपूर्ण लिंक",
       solarServices: "सोलर सेवाएं",
       contactInfo: "संपर्क विवरण",

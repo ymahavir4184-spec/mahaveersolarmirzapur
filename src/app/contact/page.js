@@ -15,13 +15,13 @@ export const metadata = {
 export default function ContactPage() {
   const company = siteConfig.company;
   const rawPhone = company.whatsapp.replace(/\D/g, "");
-  const whatsappHref = `https://wa.me/${rawPhone}?text=${encodeURIComponent("Hello AuraSun Solar, I would like to get in touch regarding a solar project.")}`;
+  const whatsappHref = `https://wa.me/${rawPhone}?text=${encodeURIComponent(`Hello ${company.name}, I would like to get in touch regarding a solar project.`)}`;
 
   return (
     <>
       <PageHero
         badge="Connect with Our Team"
-        title="Contact AuraSun Solar Solutions"
+        title={`Contact ${company.name}`}
         subtitle="Have a question about rooftop solar viability, net metering regulations, or custom commercial quotes? Our senior solar engineers are ready to assist."
         breadcrumbs={[{ label: "Contact", href: "/contact" }]}
       />
@@ -77,6 +77,10 @@ export default function ContactPage() {
                         {company.email}
                       </a>
                     </div>
+                  </div>
+
+                  <div className="pl-9 text-xs text-slate-500">
+                    <b>GSTIN/UIN:</b> {company.gstin}
                   </div>
 
                   <div className="flex items-start gap-3.5">

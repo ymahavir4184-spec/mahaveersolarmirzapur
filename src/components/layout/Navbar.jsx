@@ -9,7 +9,9 @@ import { useLanguage } from "@/lib/LanguageContext";
 import Container from "../ui/Container";
 import Button from "../ui/Button";
 import LanguageSwitcher from "./LanguageSwitcher";
-import { Menu, X, ChevronDown, Phone, ExternalLink } from "lucide-react";
+import { Menu, X, ChevronDown, Phone, ExternalLink, Lock, Sun } from "lucide-react";
+
+const pmSuryaGharLoginUrl = "https://consumer.pmsuryaghar.gov.in/consumer/#/login";
 
 export default function Navbar() {
   const { language, t } = useLanguage();
@@ -104,28 +106,36 @@ export default function Navbar() {
             : "bg-white border-b border-slate-100 py-4"
         }`}
       >
-        <Container className="flex items-center justify-between">
+        <Container className="flex items-center justify-between gap-2 2xl:!max-w-[1600px] 2xl:px-6">
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center gap-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary rounded-lg"
+            className="flex min-w-0 items-center gap-1.5 sm:gap-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary rounded-xl py-0.5"
             aria-label={`${siteConfig.company.name} Home`}
           >
-            <div className="relative w-44 sm:w-48 h-10">
+            <div className="relative w-10 h-10 max-[359px]:h-9 max-[359px]:w-9 sm:w-14 sm:h-14 md:w-16 md:h-16 flex-shrink-0 transition-transform duration-200 group-hover:scale-105">
               <Image
                 src={siteConfig.company.logo}
                 alt={`${siteConfig.company.name} Logo`}
                 fill
                 priority
-                className="object-contain object-left"
+                className="object-contain drop-shadow-sm"
               />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm max-[359px]:text-xs sm:text-lg md:text-xl font-black tracking-tight font-display text-brand-navy leading-none whitespace-nowrap">
+                MAHAVEER <span className="text-[#F59E0B]">ENTERPRISES</span>
+              </span>
+              <span className="hidden sm:block text-[10px] sm:text-xs font-bold text-emerald-600 tracking-wider uppercase mt-0.5 sm:mt-1">
+                Mirzapur, U.P.
+              </span>
             </div>
           </Link>
 
           {/* Desktop Navigation Links */}
           <nav
             aria-label="Main Navigation"
-            className="hidden lg:flex items-center gap-1 xl:gap-2 text-sm font-semibold text-slate-700"
+            className="hidden 2xl:flex shrink-0 items-center gap-0.5 text-sm font-semibold text-slate-700"
           >
             {navLinks.map((item) => {
               if (item.isDropdown) {
@@ -138,7 +148,7 @@ export default function Navbar() {
                   >
                     <Link
                       href={item.href}
-                      className={`inline-flex items-center gap-1 px-3 py-2 rounded-lg transition-colors hover:text-brand-primary hover:bg-slate-50 ${
+                      className={`inline-flex items-center gap-1 px-2 py-2 rounded-lg transition-colors hover:text-brand-primary hover:bg-slate-50 ${
                         pathname.startsWith("/services") ? "text-brand-primary font-bold bg-blue-50/50" : ""
                       }`}
                     >
@@ -180,7 +190,7 @@ export default function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`px-3 py-2 rounded-lg transition-colors hover:text-brand-primary hover:bg-slate-50 ${
+                  className={`px-2 py-2 rounded-lg transition-colors hover:text-brand-primary hover:bg-slate-50 ${
                     isActive ? "text-brand-primary font-bold bg-blue-50/50" : ""
                   }`}
                 >
@@ -191,32 +201,54 @@ export default function Navbar() {
           </nav>
 
           {/* Right Action Cluster */}
-          <div className="hidden lg:flex items-center gap-3">
+          <div className="hidden 2xl:flex shrink-0 items-center gap-2">
             {/* Language Switcher */}
             {siteConfig.features.languageSelection && <LanguageSwitcher />}
 
+            <a
+              href={pmSuryaGharLoginUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 whitespace-nowrap rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-2 text-xs font-bold text-emerald-800 transition-colors hover:border-emerald-300 hover:bg-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+              aria-label={`${t.nav.pmSuryaGharLogin} (opens in a new tab)`}
+            >
+              <Sun className="h-4 w-4" aria-hidden="true" />
+              <span>{t.nav.pmSuryaGharLogin}</span>
+              <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+            </a>
+
             {/* Optional Configurable Login Button */}
             {showLogin && (
-              <a
-                href={siteConfig.login.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-slate-700 hover:text-brand-primary rounded-lg transition-colors"
-              >
-                <span>{loginLabel}</span>
-                <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
-              </a>
+              siteConfig.login.url.startsWith("/") ? (
+                <Link
+                  href={siteConfig.login.url}
+                  className="inline-flex items-center gap-1.5 whitespace-nowrap px-2.5 py-2 text-sm font-semibold text-slate-700 hover:text-brand-primary rounded-lg transition-colors border border-slate-200 hover:border-brand-primary/40"
+                >
+                  <Lock className="w-3.5 h-3.5 text-brand-primary" aria-hidden="true" />
+                  <span>{loginLabel}</span>
+                </Link>
+              ) : (
+                <a
+                  href={siteConfig.login.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 whitespace-nowrap px-2.5 py-2 text-sm font-semibold text-slate-700 hover:text-brand-primary rounded-lg transition-colors"
+                >
+                  <span>{loginLabel}</span>
+                  <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
+                </a>
+              )
             )}
 
             {/* Free Quote CTA */}
-            <Button href="/quote" variant="primary" size="sm">
+            <Button href="/quote" variant="primary" size="sm" className="shrink-0 whitespace-nowrap">
               {t.nav.getQuote}
             </Button>
           </div>
 
           {/* Mobile Right Controls: Switcher + Hamburger */}
-          <div className="flex lg:hidden items-center gap-2">
-            {siteConfig.features.languageSelection && <LanguageSwitcher />}
+          <div className="flex 2xl:hidden shrink-0 items-center gap-2">
+            {siteConfig.features.languageSelection && <LanguageSwitcher className="max-[359px]:hidden" />}
 
             <button
               ref={triggerRef}
@@ -240,7 +272,7 @@ export default function Navbar() {
       {/* Mobile Drawer Backdrop & Drawer Panel */}
       {mobileMenuOpen && (
         <div
-          className="fixed inset-0 z-50 lg:hidden"
+          className="fixed inset-0 z-50 2xl:hidden"
           role="dialog"
           aria-modal="true"
           aria-label="Mobile Navigation"
@@ -259,14 +291,24 @@ export default function Navbar() {
             className="fixed inset-y-0 right-0 w-full max-w-sm bg-white shadow-2xl flex flex-col z-50 overflow-y-auto"
           >
             {/* Drawer Header */}
-            <div className="p-5 flex items-center justify-between border-b border-slate-100">
-              <div className="relative w-36 h-8">
-                <Image
-                  src={siteConfig.company.logo}
-                  alt={siteConfig.company.name}
-                  fill
-                  className="object-contain object-left"
-                />
+            <div className="p-4 sm:p-5 flex items-center justify-between border-b border-slate-100">
+              <div className="flex items-center gap-2.5">
+                <div className="relative w-12 h-12 flex-shrink-0">
+                  <Image
+                    src={siteConfig.company.logo}
+                    alt={siteConfig.company.name}
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-base font-black font-display text-brand-navy leading-none">
+                    MAHAVEER <span className="text-[#F59E0B]">ENTERPRISES</span>
+                  </span>
+                  <span className="text-[10px] font-bold text-emerald-600 tracking-wider uppercase mt-1">
+                    Mirzapur, U.P.
+                  </span>
+                </div>
               </div>
               <button
                 type="button"
@@ -280,6 +322,27 @@ export default function Navbar() {
 
             {/* Mobile Nav Links */}
             <nav className="p-5 flex-1 space-y-1">
+              {siteConfig.features.languageSelection && (
+                <div className="mb-3 flex items-center justify-between border-b border-slate-100 px-3 py-3">
+                  <span className="text-sm font-semibold text-slate-600">Language</span>
+                  <LanguageSwitcher />
+                </div>
+              )}
+
+              <a
+                href={pmSuryaGharLoginUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setMobileMenuOpen(false)}
+                className="mb-2 flex min-h-[48px] items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-base font-bold text-emerald-800 hover:bg-emerald-100"
+              >
+                <span className="flex items-center gap-2">
+                  <Sun className="h-4 w-4" aria-hidden="true" />
+                  <span>{t.nav.pmSuryaGharLogin}</span>
+                </span>
+                <ExternalLink className="h-4 w-4" aria-hidden="true" />
+              </a>
+
               {navLinks.map((item) => {
                 if (item.isDropdown) {
                   return (
@@ -324,15 +387,28 @@ export default function Navbar() {
 
               {/* Login link in mobile if enabled */}
               {showLogin && (
-                <a
-                  href={siteConfig.login.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between px-4 py-3 rounded-xl text-base font-semibold text-slate-700 hover:bg-slate-50 min-h-[44px]"
-                >
-                  <span>{loginLabel}</span>
-                  <ExternalLink className="w-4 h-4 text-slate-400" aria-hidden="true" />
-                </a>
+                siteConfig.login.url.startsWith("/") ? (
+                  <Link
+                    href={siteConfig.login.url}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-between px-4 py-3 rounded-xl text-base font-semibold text-slate-700 hover:bg-slate-50 min-h-[44px]"
+                  >
+                    <span className="flex items-center gap-2">
+                      <Lock className="w-4 h-4 text-brand-primary" aria-hidden="true" />
+                      <span>{loginLabel}</span>
+                    </span>
+                  </Link>
+                ) : (
+                  <a
+                    href={siteConfig.login.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between px-4 py-3 rounded-xl text-base font-semibold text-slate-700 hover:bg-slate-50 min-h-[44px]"
+                  >
+                    <span>{loginLabel}</span>
+                    <ExternalLink className="w-4 h-4 text-slate-400" aria-hidden="true" />
+                  </a>
+                )
               )}
             </nav>
 

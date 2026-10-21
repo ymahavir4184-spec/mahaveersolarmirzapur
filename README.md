@@ -37,7 +37,9 @@ This codebase is architected as a **master template** for multiple solar clients
 │   ├── generate-placeholders.mjs    # Sharp script to regenerate placeholder WebP assets
 │   └── check-links.mjs              # Automated internal link crawler
 ├── supabase/
-│   └── schema.sql                   # Database table definition with RLS & indexes
+│   ├── setup.sql                    # Complete SQL Editor setup for all database tables/functions
+│   ├── schema.sql                   # Inbound leads schema source
+│   └── migrations/                  # Ordered quotation, billing, and A4 estimate tables/functions
 ├── docs/
 │   ├── CLIENT_SETUP.md              # 9-step guide to onboarding a new solar client
 │   ├── IMAGES.md                    # Asset resolutions, ratios, and formats
@@ -46,7 +48,7 @@ This codebase is architected as a **master template** for multiple solar clients
 │   └── PRODUCTION_CHECKLIST.md      # Launch readiness and verification checklist
 └── src/
     ├── app/
-    │   ├── api/leads/route.js       # Lead capture endpoint with rate limiting & dedupe
+    │   ├── api/leads/route.js       # Lead capture endpoint with server-side validation
     │   ├── about/page.js            # About company & milestones
     │   ├── contact/page.js          # Direct contact desk & location
     │   ├── privacy/page.js          # Config-driven privacy policy
@@ -82,7 +84,6 @@ This codebase is architected as a **master template** for multiple solar clients
     └── lib/
         ├── LanguageContext.jsx      # Client state with cookie/localStorage sync
         ├── phone.js                 # Indian phone normalizer (+91XXXXXXXXXX)
-        ├── rateLimit.js             # Upstash Redis & in-memory sliding rate limiter
         ├── supabaseServer.js        # Server-only Supabase client
         └── translations.js          # Complete English and Hindi dictionaries
 ```
@@ -115,9 +116,8 @@ This codebase is architected as a **master template** for multiple solar clients
 
 ## 🔒 Security & Performance Features
 
-- **Row Level Security (RLS)**: Client browsers cannot list or query leads from Supabase. All inserts are signed using the server-side `SUPABASE_SERVICE_ROLE_KEY`.
+- **Row Level Security (RLS)**: Client browsers cannot list or query private data from Supabase. Server routes use `SUPABASE_SECRET_KEY` (or the legacy `SUPABASE_SERVICE_ROLE_KEY` fallback).
 - **Honeypot Protection**: Hidden form fields silently discard spam bot submissions without disrupting user experience.
-- **Rate Limiting**: Limits submissions per IP address (Upstash Redis when configured, in-memory fallback otherwise).
-- **Lead Deduplication**: Automatically drops duplicate submissions with identical phone and source within 10 minutes.
+- **Lead Validation**: Validates form fields and phone numbers on the server; a hidden honeypot discards basic bot submissions.
 - **Security Headers**: Injected automatically on all routes (`X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy`).
 - **No Third-Party Tracking**: Zero external analytics or ad scripts bundled, ensuring instant loading and AA privacy compliance.

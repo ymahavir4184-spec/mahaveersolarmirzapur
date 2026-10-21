@@ -1,4 +1,5 @@
 import HeroSection from "@/components/home/HeroSection";
+import BrandRangeSection from "@/components/home/BrandRangeSection";
 import TrustSection from "@/components/home/TrustSection";
 import ServicesOverview from "@/components/home/ServicesOverview";
 import ProductsGrid from "@/components/home/ProductsGrid";
@@ -23,37 +24,40 @@ export default function HomePage() {
       {/* 2. Hero Section */}
       <HeroSection />
 
-      {/* 3. Trust Indicators */}
+      {/* 3. Brands available for customer solar projects */}
+      <BrandRangeSection />
+
+      {/* 4. Trust Indicators */}
       <TrustSection />
 
-      {/* 4. Residential, Commercial, Industrial Solutions */}
+      {/* 5. Residential, Commercial, Industrial Solutions */}
       <ServicesOverview />
 
-      {/* 5. Product Categories */}
+      {/* 6. Product Categories */}
       <ProductsGrid />
 
-      {/* 6. How Installation Works */}
+      {/* 7. How Installation Works */}
       <ProcessSection />
 
-      {/* 7. Project Gallery */}
+      {/* 8. Project Gallery */}
       <ProjectsGallery />
 
-      {/* 8. Company Advantages */}
+      {/* 9. Company Advantages */}
       <WhyUsSection />
 
-      {/* 9. Savings Calculator */}
+      {/* 10. Savings Calculator */}
       <CalculatorSection />
 
-      {/* 10. Testimonials */}
+      {/* 11. Testimonials */}
       <TestimonialsSection />
 
-      {/* 11. FAQ */}
+      {/* 12. FAQ */}
       <FaqSection />
 
-      {/* 12. Quote CTA Band */}
+      {/* 13. Quote CTA Band */}
       <CtaBand />
 
-      {/* 13. Contact + WhatsApp Section */}
+      {/* 14. Contact + WhatsApp Section */}
       <HomeContactSection />
     </>
   );

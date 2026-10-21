@@ -6,20 +6,27 @@
 
 export const siteConfig = {
   company: {
-    name: "AuraSun Solar Solutions",
+    name: "Mahaveer Enterprises",
+    legalName: "Mahaveer Enterprises",
     tagline: {
-      en: "Clean Solar Energy for Homes, Businesses, and Industry",
-      hi: "घरों, व्यवसायों और उद्योगों के लिए स्वच्छ सौर ऊर्जा",
+      en: "Leading Rooftop Solar & Clean Energy EPC in Mirzapur",
+      hi: "मिर्जापुर एवं पूर्वांचल में विश्वसनीय रूफटॉप सौर ऊर्जा समाधान",
     },
-    logo: "/client-assets/logo.svg",
+    logo: "/client-assets/logo.png",
     favicon: "/client-assets/favicon.ico",
-    phone: "+919876543210",
-    displayPhone: "+91 98765 43210",
-    whatsapp: "+919876543210",
-    email: "contact@aurasunsolar.com",
-    address: "Plot 42, Sector 18, Udyog Vihar, Gurugram, Haryana 122015, India",
-    mapsUrl: "https://maps.google.com/?q=Udyog+Vihar+Gurugram+Solar",
-    establishedYear: 2018,
+    phone: "+919452216034",
+    displayPhone: "+91 94522 16034",
+    mobile: "9452216034",
+    whatsapp: "+919452216034",
+    email: "shivsagar081986@gmail.com",
+    address: "Laxmanpuram Colony, Bharuhana, Mirzapur",
+    stateName: "Uttar Pradesh",
+    stateCode: "09",
+    gstin: "09LCSPS7439E1ZL",
+    bankName: "UNION BANK OF INDIA CC A/C",
+    bankBranchIfsc: "MIRZAPUR & UBIN0930687",
+    mapsUrl: "https://maps.google.com/?q=Laxmanpuram+Colony+Bharuhana+Mirzapur",
+    establishedYear: 2020,
   },
 
   branding: {
@@ -39,6 +46,7 @@ export const siteConfig = {
     logo: "/client-assets/logo.svg",
     favicon: "/client-assets/favicon.ico",
     hero: "/client-assets/hero.webp",
+    dashboardHero: "/client-assets/mahaveer-enterprises-banner.webp",
     about: "/client-assets/about.webp",
     residential: "/client-assets/residential.webp",
     commercial: "/client-assets/commercial.webp",
@@ -416,19 +424,19 @@ export const siteConfig = {
   ],
 
   seo: {
-    title: "AuraSun Solar | Leading Rooftop Solar EPC & Clean Energy Solutions",
-    description: "High-efficiency residential, commercial and industrial solar installations with end-to-end net metering and PM Surya Ghar subsidy assistance.",
-    baseUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://aurasunsolar.com",
+    title: "Mahaveer Enterprises | Leading Rooftop Solar EPC in Mirzapur",
+    description: "High-efficiency residential, commercial and industrial rooftop solar installations in Bharuhana, Mirzapur with end-to-end net metering and PM Surya Ghar subsidy assistance.",
+    baseUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://mahaveerenterprises.com",
     ogImage: "/client-assets/hero.webp",
     keywords: [
-      "solar power company",
-      "rooftop solar panels",
-      "PM Surya Ghar subsidy",
-      "commercial solar plant",
-      "industrial solar EPC",
-      "solar net metering",
-      "Gurugram solar company",
-      "solar inverter battery",
+      "Mahaveer Enterprises",
+      "solar power company Mirzapur",
+      "rooftop solar panels Bharuhana",
+      "PM Surya Ghar subsidy Mirzapur",
+      "commercial solar plant Mirzapur UP",
+      "industrial solar EPC Purvanchal",
+      "solar net metering UPPCL",
+      "solar inverter battery Mirzapur",
     ],
   },
 
@@ -436,7 +444,7 @@ export const siteConfig = {
     languageSelection: true,
     leadPopup: true,
     whatsappButton: true,
-    loginButton: false,
+    loginButton: true,
     savingsCalculator: true,
     testimonials: true,
     projects: true,
@@ -444,15 +452,15 @@ export const siteConfig = {
   },
 
   login: {
-    url: "",
+    url: "/quotation",
     label: {
-      en: "Client Portal",
-      hi: "ग्राहक पोर्टल",
+      en: "Staff Login",
+      hi: "स्टाफ लॉगिन",
     },
   },
 
   leadPopup: {
-    delaySeconds: 4,
+    delaySeconds: 1,
     categories: [
       "Residential Rooftop (1 kW - 10 kW)",
       "Commercial Solar (10 kW - 100 kW)",
@@ -472,7 +480,7 @@ export const siteConfig = {
   },
 
   footer: {
-    copyright: "AuraSun Solar Solutions Pvt. Ltd.",
+    copyright: "Mahaveer Enterprises",
     licenseNote: "Registered Solar EPC Contractor",
     disclaimer: {
       en: "Solar energy generation figures, cost savings, and payback periods depend on local solar irradiance, rooftop orientation, grid stability, and applicable utility tariff structures. Calculations provided on this website are estimates.",

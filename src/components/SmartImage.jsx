@@ -26,7 +26,7 @@ export default function SmartImage({
   const [hasError, setHasError] = useState(false);
 
   // Fallback to safe alt text if missing
-  const safeAlt = alt || "Solar energy equipment and installation by AuraSun Solar";
+  const safeAlt = alt || `Solar energy equipment and installation by ${siteConfig.company.name}`;
 
   const handleError = () => {
     if (!hasError) {

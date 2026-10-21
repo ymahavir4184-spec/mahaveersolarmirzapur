@@ -118,7 +118,7 @@ export default function LeadForm({
   const rawWhatsApp = siteConfig.company.whatsapp.replace(/\D/g, "");
   const whatsappText = submittedLead
     ? `New Solar Quote Enquiry:\nName: ${submittedLead.name}\nPhone: ${submittedLead.phone}\nCity: ${submittedLead.city || "N/A"}\nMonthly Bill: ${submittedLead.monthly_bill || "N/A"}\nInterest: ${submittedLead.category}`
-    : `Hello AuraSun Solar, I would like to request a customized rooftop solar quote.`;
+    : `Hello ${siteConfig.company.name}, I would like to request a customized rooftop solar quote.`;
 
   const whatsappHref = `https://wa.me/${rawWhatsApp}?text=${encodeURIComponent(whatsappText)}`;
 

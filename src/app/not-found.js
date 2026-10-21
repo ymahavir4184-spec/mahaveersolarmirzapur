@@ -4,7 +4,7 @@ import Button from "@/components/ui/Button";
 import { Compass, Home, Phone } from "lucide-react";
 
 export const metadata = {
-  title: "Page Not Found (404) | AuraSun Solar",
+  title: "Page Not Found (404) | Mahaveer Enterprises",
 };
 
 export default function NotFound() {

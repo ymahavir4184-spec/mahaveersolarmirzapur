@@ -1,6 +1,6 @@
 -- ==============================================================================
 -- AuraSun Solar Website Platform - Supabase Database Schema
--- Run this in your Supabase SQL Editor for each new client deployment.
+-- Leads schema component. For the complete SQL Editor setup, run supabase/setup.sql.
 -- ==============================================================================
 
 -- 1. Create leads table
@@ -31,6 +31,10 @@ CREATE INDEX IF NOT EXISTS idx_leads_source ON public.leads (source);
 
 -- 3. Enable Row Level Security (RLS)
 ALTER TABLE public.leads ENABLE ROW LEVEL SECURITY;
+
+-- Browser roles stay locked out; writes come from the server-only service role.
+REVOKE ALL ON TABLE public.leads FROM anon, authenticated;
+GRANT ALL ON TABLE public.leads TO service_role;
 
 -- 4. Security Policies:
 -- By default, with RLS enabled and NO public policies defined, ALL anon/public requests

@@ -7,19 +7,24 @@ This platform is optimized for seamless zero-downtime deployment on [Vercel](htt
 ## 1. Deploying to Vercel
 
 ### Step-by-Step Deployment
-1. Push your client repository to GitHub, GitLab, or Bitbucket.
-2. Sign in to [Vercel](https://vercel.com) and click **Add New -> Project**.
-3. Select your solar client repository.
-4. Framework Preset will automatically detect **Next.js**.
-5. In the **Environment Variables** accordion, add the following production keys:
+1. Create the Supabase project and run the current `supabase/setup.sql` in its SQL Editor before deploying. Database-backed staff sessions, billing APIs, and the estimate deletion audit log require the included tables/functions. For an existing setup, apply any required migrations through `20261021000800_remove_rate_limits.sql` once.
+2. Push your client repository to GitHub, GitLab, or Bitbucket.
+3. Sign in to [Vercel](https://vercel.com) and click **Add New -> Project**.
+4. Select your solar client repository.
+5. Framework Preset will automatically detect **Next.js**.
+6. In the **Environment Variables** accordion, add the following production keys:
    - `NEXT_PUBLIC_SITE_URL`: The client's canonical URL (e.g. `https://aurasunsolar.com`)
    - `SUPABASE_URL`: The client's Supabase project URL
-   - `SUPABASE_SERVICE_ROLE_KEY`: The client's secret Supabase service role key
-   - `UPSTASH_REDIS_REST_URL`: (Optional) Upstash Redis endpoint for rate limiting
-   - `UPSTASH_REDIS_REST_TOKEN`: (Optional) Upstash Redis token
+   - `SUPABASE_SECRET_KEY`: The client's Supabase Secret key (`sb_secret_...`); legacy projects can use `SUPABASE_SERVICE_ROLE_KEY`
+   - `QUOTATION_LOGIN_ID`, `QUOTATION_LOGIN_PASSWORD`: Private staff portal credentials, each 1–10 characters
+   - `ESTIMATE_DELETE_MASTER_PASSWORD`: Private value of 1–10 characters. It is checked server-side, and an active staff session plus estimate-number confirmation are required. Never commit it or add a `NEXT_PUBLIC_` prefix.
+   - `COMPANY_GSTIN`: (Optional) Company's registered GSTIN; required to charge GST
+   - `COMPANY_BANK_ACCOUNT`: (Optional) Account number printed on invoices
+   - `BILL_NUMBER_PREFIX`: (Optional) Invoice number prefix, defaults to `ME`
+   - `ESTIMATE_NUMBER_PREFIX`: (Optional) Estimate number prefix, defaults to `ME`
    - `RESEND_API_KEY`: (Optional) API key for immediate email notifications
    - `NOTIFICATION_EMAIL`: (Optional) Owner email for lead alerts
-6. Click **Deploy**.
+7. Click **Deploy**.
 
 ---
 

@@ -41,7 +41,7 @@ export default function AboutPage() {
   return (
     <>
       <PageHero
-        badge="About AuraSun Solar"
+        badge={`About ${company.name}`}
         title="Engineering Precision. Clean Energy Independence."
         subtitle="We design, engineer, and commission high-yield rooftop solar systems engineered for 25+ years of reliable, zero-maintenance power generation."
         breadcrumbs={[{ label: "About Us", href: "/about" }]}
@@ -54,7 +54,7 @@ export default function AboutPage() {
             <div className="lg:col-span-6 relative aspect-[6/5] rounded-3xl overflow-hidden shadow-xl border-4 border-white">
               <SmartImage
                 src={siteConfig.assets.about}
-                alt="AuraSun solar installation engineers at work"
+                alt={`${company.name} engineers at work`}
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"

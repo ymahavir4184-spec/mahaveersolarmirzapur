@@ -9,8 +9,8 @@ import Button from "@/components/ui/Button";
 import { MapPin, Zap, ArrowRight, ShieldCheck } from "lucide-react";
 
 export const metadata = {
-  title: "Solar Installation Projects & Portfolio | Verified Rooftop Systems",
-  description: "Browse completed residential, commercial, and industrial rooftop solar projects installed and commissioned by AuraSun Solar across India.",
+  title: `Solar Installation Projects & Portfolio | ${siteConfig.company.name}`,
+  description: `Browse completed residential, commercial, and industrial rooftop solar projects installed and commissioned by ${siteConfig.company.name}.`,
 };
 
 export default function ProjectsPage() {

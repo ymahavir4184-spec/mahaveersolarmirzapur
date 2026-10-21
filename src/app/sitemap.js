@@ -1,7 +1,7 @@
 import { siteConfig } from "@/config/site";
 
 export default function sitemap() {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || siteConfig.seo.baseUrl || "https://aurasunsolar.com";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || siteConfig.seo.baseUrl || "https://mahaveerenterprises.com";
   const currentDate = new Date().toISOString();
 
   const staticRoutes = [

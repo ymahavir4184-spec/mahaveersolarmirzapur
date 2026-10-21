@@ -23,14 +23,24 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 pb-12 border-b border-slate-800/80">
           {/* Col 1: Brand & Bio (4 cols) */}
           <div className="lg:col-span-4 space-y-5">
-            <Link href="/" className="inline-block" aria-label={`${siteConfig.company.name} Home`}>
-              <div className="relative w-48 h-10 bg-white/95 rounded-lg p-1.5 px-3">
-                <Image
-                  src={siteConfig.company.logo}
-                  alt={siteConfig.company.name}
-                  fill
-                  className="object-contain object-left px-2"
-                />
+            <Link href="/" className="inline-block group" aria-label={`${siteConfig.company.name} Home`}>
+              <div className="flex items-center gap-3 bg-white/95 rounded-2xl p-2.5 px-4 shadow-md transition-transform duration-200 group-hover:scale-105">
+                <div className="relative w-14 h-14 sm:w-16 sm:h-16 flex-shrink-0">
+                  <Image
+                    src={siteConfig.company.logo}
+                    alt={siteConfig.company.name}
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-lg sm:text-xl font-black tracking-tight font-display text-brand-navy leading-none">
+                    MAHAVEER <span className="text-[#F59E0B]">ENTERPRISES</span>
+                  </span>
+                  <span className="text-[10px] sm:text-[11px] font-bold text-emerald-600 tracking-wider uppercase mt-1">
+                    Mirzapur, U.P.
+                  </span>
+                </div>
               </div>
             </Link>
 
@@ -153,6 +163,7 @@ export default function Footer() {
                   </span>
                 </a>
               </li>
+              <li className="pl-6 text-xs text-slate-400">GSTIN: {siteConfig.company.gstin}</li>
             </ul>
           </div>
         </div>
@@ -178,6 +189,14 @@ export default function Footer() {
               {t.footer.termsConditions}
             </Link>
           </div>
+        </div>
+
+        <div className="pt-5 text-center text-xs text-slate-400">
+          Designed &amp; Developed by <span className="font-semibold text-slate-200">BizEdify</span>
+          <span aria-hidden="true"> · </span>
+          <a href="tel:+918299388507" className="hover:text-white transition-colors">
+            Contact: 8299388507
+          </a>
         </div>
       </Container>
     </footer>

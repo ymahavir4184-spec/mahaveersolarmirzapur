@@ -14,7 +14,7 @@ export default function Section({
   return (
     <section
       id={id}
-      className={`py-16 md:py-24 transition-colors ${variantStyles[variant] || variantStyles.white} ${className}`}
+      className={`py-12 sm:py-16 md:py-24 transition-colors ${variantStyles[variant] || variantStyles.white} ${className}`}
       {...props}
     >
       {children}

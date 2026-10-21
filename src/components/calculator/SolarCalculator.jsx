@@ -5,7 +5,6 @@ import Link from "next/link";
 import { siteConfig } from "@/config/site";
 import { useLanguage } from "@/lib/LanguageContext";
 import { normalizeIndianPhone } from "@/lib/phone";
-import { generateSolarQuotationPdf } from "@/lib/pdfGenerator";
 import Card from "../ui/Card";
 import Button from "../ui/Button";
 import {
@@ -122,11 +121,12 @@ export default function SolarCalculator({ standalone = false }) {
   };
 
   // Helper to get PDF doc
-  const buildPdfDoc = () => {
+  const buildPdfDoc = async () => {
+    const { generateSolarQuotationPdf } = await import("@/lib/pdfGenerator");
     return generateSolarQuotationPdf({
       clientName: clientName.trim() || "Valued Customer",
       clientPhone: clientPhone.trim() || "Not specified",
-      city: clientCity.trim() || "Gurugram, Haryana",
+      city: clientCity.trim() || "Laxmanpuram Colony, Bharuhana, Mirzapur",
       propertyType,
       billValue: mode === "bill" ? billValue : Math.round(unitsValue * tariff),
       unitsValue: calculatedMonthlyUnits,
@@ -146,15 +146,15 @@ export default function SolarCalculator({ standalone = false }) {
   };
 
   // Handle direct PDF Download
-  const handleDownloadPdf = () => {
+  const handleDownloadPdf = async () => {
     setIsGeneratingPdf(true);
     setActionSuccess(null);
     setPhoneError("");
 
     try {
-      const doc = buildPdfDoc();
+      const doc = await buildPdfDoc();
       const safeName = (clientName.trim() || "Customer").replace(/[^a-zA-Z0-9]/g, "_");
-      const filename = `AuraSun_Solar_Quotation_${safeName}_${recommendedKw}kW.pdf`;
+      const filename = `Mahaveer_Enterprises_Quotation_${safeName}_${recommendedKw}kW.pdf`;
       doc.save(filename);
 
       if (clientPhone.trim()) {
@@ -209,9 +209,9 @@ export default function SolarCalculator({ standalone = false }) {
 
     try {
       // 1. Generate & download the PDF for the user
-      const doc = buildPdfDoc();
+      const doc = await buildPdfDoc();
       const safeName = (clientName.trim() || "Customer").replace(/[^a-zA-Z0-9]/g, "_");
-      const filename = `AuraSun_Solar_Quotation_${safeName}_${recommendedKw}kW.pdf`;
+      const filename = `Mahaveer_Enterprises_Quotation_${safeName}_${recommendedKw}kW.pdf`;
       doc.save(filename);
 
       // Save lead silently
@@ -278,18 +278,18 @@ export default function SolarCalculator({ standalone = false }) {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Column: Input Form Controls & Client Information (7 cols) */}
         <Card className="lg:col-span-7 bg-white shadow-card border-brand-border/80">
-          <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+          <div className="flex flex-col items-start gap-3 pb-4 border-b border-slate-100 sm:flex-row sm:items-center sm:justify-between">
             <h3 className="text-lg sm:text-xl font-bold font-display text-brand-navy flex items-center gap-2">
               <Zap className="w-5 h-5 text-brand-primary" aria-hidden="true" />
               <span>{t.calculator.inputHeading}</span>
             </h3>
 
             {/* Mode Toggle */}
-            <div className="inline-flex rounded-lg bg-slate-100 p-1 text-xs font-semibold">
+            <div className="inline-flex w-full rounded-lg bg-slate-100 p-1 text-xs font-semibold sm:w-auto">
               <button
                 type="button"
                 onClick={() => setMode("bill")}
-                className={`px-3 py-1.5 rounded-md transition-all ${
+                className={`flex-1 px-2 py-1.5 text-center leading-tight transition-all sm:flex-none sm:px-3 ${
                   mode === "bill"
                     ? "bg-white text-brand-primary shadow-sm"
                     : "text-slate-600 hover:text-slate-900"
@@ -300,7 +300,7 @@ export default function SolarCalculator({ standalone = false }) {
               <button
                 type="button"
                 onClick={() => setMode("units")}
-                className={`px-3 py-1.5 rounded-md transition-all ${
+                className={`flex-1 px-2 py-1.5 text-center leading-tight transition-all sm:flex-none sm:px-3 ${
                   mode === "units"
                     ? "bg-white text-brand-primary shadow-sm"
                     : "text-slate-600 hover:text-slate-900"

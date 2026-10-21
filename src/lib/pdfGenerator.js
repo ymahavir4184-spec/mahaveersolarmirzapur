@@ -1,5 +1,6 @@
 import { jsPDF } from 'jspdf';
 import { siteConfig } from '../config/site.js';
+import { mahaveerLogoBase64 } from './logoBase64.js';
 
 /**
  * Generate a modern, branded Solar Quotation PDF
@@ -10,7 +11,7 @@ import { siteConfig } from '../config/site.js';
 export function generateSolarQuotationPdf({
   clientName = "Valued Customer",
   clientPhone = "",
-  city = "Gurugram, Haryana",
+  city = "Laxmanpuram Colony, Bharuhana, Mirzapur",
   propertyType = "residential",
   billValue = 6500,
   unitsValue = 750,
@@ -46,7 +47,7 @@ export function generateSolarQuotationPdf({
     year: 'numeric',
   });
 
-  const propId = proposalId || `AS-${now.getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`;
+  const propId = proposalId || `MS-${now.getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`;
 
   // Page dimensions
   const pageWidth = 210;
@@ -75,33 +76,31 @@ export function generateSolarQuotationPdf({
   doc.setFillColor(...skyBlue);
   doc.rect(0, 36, pageWidth, 1.8, 'F');
 
-  // Vector Logo Icon (Sun + Solar Grid)
+  // Logo Emblem Image
   const logoX = margin;
-  const logoY = 9;
+  const logoY = 8;
   
-  // Sun circle
-  doc.setFillColor(...amber);
-  doc.circle(logoX + 7, logoY + 7, 6, 'F');
-
-  // Solar rays / PV box
-  doc.setFillColor(...blue);
-  doc.roundedRect(logoX + 2, logoY + 2, 10, 10, 1.5, 1.5, 'F');
-  doc.setDrawColor(255, 255, 255);
-  doc.setLineWidth(0.4);
-  doc.line(logoX + 7, logoY + 2, logoX + 7, logoY + 12);
-  doc.line(logoX + 2, logoY + 7, logoX + 12, logoY + 7);
+  if (mahaveerLogoBase64) {
+    try {
+      doc.addImage(mahaveerLogoBase64, 'PNG', logoX, logoY - 1, 22, 22);
+    } catch {
+      // Fallback circle
+      doc.setFillColor(...amber);
+      doc.circle(logoX + 11, logoY + 10, 8, 'F');
+    }
+  }
 
   // Company Name
   doc.setTextColor(255, 255, 255);
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(16);
-  doc.text(siteConfig.company.name.toUpperCase(), logoX + 16, logoY + 6);
+  doc.setFontSize(14.5);
+  doc.text((siteConfig.company.legalName || siteConfig.company.name).toUpperCase(), logoX + 25, logoY + 7);
 
   // Tagline
   doc.setFontSize(8);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(...skyBlue);
-  doc.text("MNRE Channel Partner | High-Efficiency Rooftop Solar EPC", logoX + 16, logoY + 11);
+  doc.text("MNRE Channel Partner | Rooftop Solar EPC, Mirzapur (UP)", logoX + 25, logoY + 12.5);
 
   // Contact Info on Header Right
   doc.setFontSize(7.5);
@@ -377,7 +376,7 @@ export function generateSolarQuotationPdf({
   doc.setTextColor(...slateMuted);
   doc.text(siteConfig.company.address, margin, curY + 7.5, { maxWidth: 90 });
   doc.text(`WhatsApp / Helpline: ${siteConfig.company.displayPhone}`, margin, curY + 15);
-  doc.text(`Email: ${siteConfig.company.email} | GSTIN: 07AABCA1234F1Z8`, margin, curY + 19);
+  doc.text(`Email: ${siteConfig.company.email} | GSTIN: ${siteConfig.company.gstin}`, margin, curY + 19);
 
   // Right: Official Digital Stamp & Signatory
   const stampBoxX = pageWidth - margin - 75;
@@ -396,13 +395,13 @@ export function generateSolarQuotationPdf({
 
   // Stamp Text inside
   doc.setTextColor(...stampRed);
-  doc.setFontSize(4.8);
+  doc.setFontSize(4.6);
   doc.setFont('helvetica', 'bold');
-  doc.text("AURASUN SOLAR SOLUTIONS", stampCenterX, stampCenterY - 7.5, { align: 'center' });
+  doc.text(siteConfig.company.legalName.toUpperCase(), stampCenterX, stampCenterY - 7.5, { align: 'center', maxWidth: 25 });
   doc.setFontSize(7.5);
   doc.text("APPROVED", stampCenterX, stampCenterY - 1.8, { align: 'center' });
-  doc.setFontSize(5.5);
-  doc.text("TECHNICAL SEAL", stampCenterX, stampCenterY + 2.8, { align: 'center' });
+  doc.setFontSize(5.2);
+  doc.text("BHARUHANA, MIRZAPUR", stampCenterX, stampCenterY + 2.8, { align: 'center' });
   doc.setFontSize(5);
   doc.text(dateStr, stampCenterX, stampCenterY + 7.5, { align: 'center' });
 
@@ -410,7 +409,7 @@ export function generateSolarQuotationPdf({
   doc.setTextColor(...slateDark);
   doc.setFontSize(7);
   doc.setFont('helvetica', 'bold');
-  doc.text("For AuraSun Solar Solutions Pvt. Ltd.", stampBoxX + 40, curY + 8);
+  doc.text(`For ${siteConfig.company.legalName}`, stampBoxX + 40, curY + 8);
 
   // Simulated digital signature script
   doc.setFont('times', 'italic');
