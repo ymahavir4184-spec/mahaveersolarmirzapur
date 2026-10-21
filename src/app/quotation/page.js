@@ -1,19 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
 import { useLanguage } from "@/lib/LanguageContext";
 import { STAFF_IDLE_TIMEOUT_MS } from "@/lib/quotation/sessionPolicy";
-
-// Dynamic client-only loading to prevent any SSR / hydration errors
-const LoginGate = dynamic(() => import("../../components/quotation/LoginGate.jsx"), {
-  ssr: false,
-  loading: () => (
-    <div className="min-h-[70vh] flex items-center justify-center">
-      <div className="animate-spin rounded-full h-8 w-8 border-3 border-blue-600 border-t-transparent" />
-    </div>
-  ),
-});
+import LoginGate from "@/components/quotation/LoginGate";
 
 const StaffDashboard = dynamic(() => import("../../components/quotation/StaffDashboard.jsx"), {
   ssr: false,
@@ -37,22 +28,18 @@ const StaffDashboard = dynamic(() => import("../../components/quotation/StaffDas
 export default function QuotationPage() {
   const { language, setLanguage } = useLanguage();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const sessionResetPromiseRef = useRef(Promise.resolve());
 
   // A page load is a security boundary: refreshes and newly opened tabs must sign in again.
   useEffect(() => {
-    let active = true;
     const channel = typeof BroadcastChannel !== "undefined"
       ? new BroadcastChannel("mahaveer-staff-session")
       : null;
     channel?.postMessage({ type: "logout" });
-    fetch("/api/auth/session", { method: "DELETE", cache: "no-store" })
-      .finally(() => {
-        if (active) setIsCheckingAuth(false);
-        channel?.close();
-      });
+    sessionResetPromiseRef.current = fetch("/api/auth/session", { method: "DELETE", cache: "no-store" })
+      .catch(() => {})
+      .finally(() => channel?.close());
     return () => {
-      active = false;
       channel?.close();
     };
   }, []);
@@ -186,19 +173,12 @@ export default function QuotationPage() {
 
   const toggleLanguage = () => setLanguage(language === "hi" ? "en" : "hi");
 
-  if (isCheckingAuth) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f8fafc] pt-28 sm:pt-36">
-        <div className="animate-spin rounded-full h-8 w-8 border-3 border-blue-600 border-t-transparent" />
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-900 pt-28 pb-6 sm:pt-36 sm:pb-8 font-sans antialiased">
       {!isAuthenticated ? (
         <LoginGate
           onLoginSuccess={handleLoginSuccess}
+          beforeLogin={() => sessionResetPromiseRef.current}
           lang={language}
           onLangToggle={toggleLanguage}
         />

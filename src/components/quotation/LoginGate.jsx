@@ -15,7 +15,7 @@ import { quotationText } from "../../lib/quotation/quotationTranslations.js";
  * - Hindi default + English toggle
  * =============================================================================
  */
-export default function LoginGate({ onLoginSuccess, lang = "hi", onLangToggle }) {
+export default function LoginGate({ onLoginSuccess, beforeLogin, lang = "hi", onLangToggle }) {
   const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -30,6 +30,7 @@ export default function LoginGate({ onLoginSuccess, lang = "hi", onLangToggle })
     setLoading(true);
 
     try {
+      await beforeLogin?.();
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

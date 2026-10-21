@@ -63,21 +63,19 @@ export default function EstimateRecords({ lang = "hi", onBack }) {
           setLoading(false);
         }
       }
-    }, 220);
+    }, search.trim() ? 220 : 0);
     return () => { active = false; isFetchingRef.current = false; window.clearTimeout(timer); controller.abort(); };
   }, [search, from, to, page, refreshTick]);
 
   useEffect(() => {
     const refresh = () => {
-      if (document.visibilityState === "visible" && !isFetchingRef.current) {
+      if (hasLoadedRef.current && document.visibilityState === "visible" && !isFetchingRef.current) {
         setRefreshTick((tick) => tick + 1);
       }
     };
-    const interval = window.setInterval(refresh, 30_000);
     window.addEventListener("focus", refresh);
     document.addEventListener("visibilitychange", refresh);
     return () => {
-      window.clearInterval(interval);
       window.removeEventListener("focus", refresh);
       document.removeEventListener("visibilitychange", refresh);
     };
@@ -190,7 +188,7 @@ export default function EstimateRecords({ lang = "hi", onBack }) {
         <div className="mt-3 flex flex-wrap gap-2">
           <button type="button" onClick={() => setRefreshTick((tick) => tick + 1)} disabled={loading} className="inline-flex min-h-10 items-center rounded-lg border border-slate-300 px-3.5 text-sm font-bold text-slate-800 disabled:opacity-50">{hi ? "अभी Refresh करें" : "Refresh now"}</button>
           <button type="button" onClick={exportCsv} disabled={exporting} className="inline-flex min-h-10 items-center rounded-lg bg-slate-900 px-3.5 text-sm font-bold text-white disabled:opacity-50">{exporting ? (hi ? "डाउनलोड हो रहा है…" : "Exporting…") : (hi ? "Excel CSV डाउनलोड" : "Export Excel CSV")}</button>
-          <span className="self-center text-xs text-slate-500">{hi ? "सूची 30 सेकंड में अपने आप अपडेट होती है।" : "The list refreshes automatically every 30 seconds."}</span>
+          <span className="self-center text-xs text-slate-500">{hi ? "नए एस्टिमेट देखने के लिए Refresh करें।" : "Refresh to check for new estimates."}</span>
         </div>
       </section>
 
