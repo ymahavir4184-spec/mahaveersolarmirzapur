@@ -7,6 +7,8 @@ import { decimalToScaledInteger, GST_RATES, roundHalfUp, sumMoney } from "@/lib/
 import { cleanDocumentDetails } from "@/lib/billing/documentDetails";
 import { STAFF_IDLE_TIMEOUT_SECONDS } from "@/lib/quotation/sessionPolicy";
 
+export const preferredRegion = "bom1";
+
 const noStore = { "Cache-Control": "no-store" };
 const databaseNotConfigured = () => NextResponse.json({ success: false, message: getSupabaseConfigurationMessage() }, { status: 503, headers: noStore });
 const databaseUnavailable = () => NextResponse.json({ success: false, message: "Estimate storage is not ready. Run the current supabase/setup.sql in the connected Supabase project, then retry." }, { status: 503, headers: noStore });

@@ -7,6 +7,8 @@ import { decimalToScaledInteger, GST_RATES, roundHalfUp } from "@/lib/billing/bi
 import { cleanDocumentDetails } from "@/lib/billing/documentDetails";
 import { STAFF_IDLE_TIMEOUT_SECONDS } from "@/lib/quotation/sessionPolicy";
 
+export const preferredRegion = "bom1";
+
 const databaseNotConfigured = () => NextResponse.json({ success: false, message: getSupabaseConfigurationMessage() }, { status: 503, headers: noStore });
 const databaseUnavailable = () => NextResponse.json({ success: false, message: "Billing storage is not ready. Run the current supabase/setup.sql in the connected Supabase project, then retry." }, { status: 503, headers: noStore });
 const unauthorized = () => NextResponse.json({ success: false, message: "Staff sign-in required." }, { status: 401 });
