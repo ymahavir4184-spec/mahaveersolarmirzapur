@@ -339,7 +339,8 @@ function groupTaxes(items) {
     current.igst += Number(item.igst_amount) || 0;
     groups.set(key, current);
   });
-  return [...groups.values()].sort((left, right) => left.hsn.localeCompare(right.hsn) || left.rate - right.rate);
+  // Keep each HSN/rate group in the order its first item appears in the estimate.
+  return [...groups.values()];
 }
 
 function drawTaxableTotals(doc, estimate, groups, y) {

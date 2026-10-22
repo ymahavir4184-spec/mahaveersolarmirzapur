@@ -83,11 +83,14 @@ export default function EstimateBuilder({ lang = "hi", onBack }) {
       customerAddress.trim(),
       customerStateName.trim() ? `State Name : ${customerStateName.trim()}, Code : ${customerStateCode.trim()}` : "",
     ].filter(Boolean).join("\n").slice(0, 500);
+    const estimateItems = items.map(({ productName, hsnSac, quantity, unit, unitPrice, gstRate }) => ({
+      productName, hsnSac, quantity, unit, unitPrice, gstRate,
+    }));
     try {
       const response = await fetch("/api/estimates", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ requestId: requestId.current, customerName, customerMobile, customerAddress: estimateAddress, taxMode, items, documentDetails }),
+        body: JSON.stringify({ requestId: requestId.current, customerName, customerMobile, customerAddress: estimateAddress, taxMode, items: estimateItems, documentDetails }),
       });
       const result = await response.json();
       if (!response.ok || !result.success) throw new Error(result.message || "Estimate could not be saved.");

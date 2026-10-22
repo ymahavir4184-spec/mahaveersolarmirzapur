@@ -90,6 +90,11 @@ export function getStaffSessionToken(request) {
   return rawToken && SESSION_HASH_PATTERN.test(rawToken) ? rawToken : null;
 }
 
+export function getStaffSessionHash(request) {
+  const token = getStaffSessionToken(request);
+  return token ? sessionHash(token) : null;
+}
+
 export function isSameOriginRequest(request) {
   const origin = request.headers.get("origin");
   const requestOrigin = new URL(request.url).origin;

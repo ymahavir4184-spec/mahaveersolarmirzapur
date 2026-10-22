@@ -70,11 +70,14 @@ export default function BillBuilder({ lang = "hi", onBack }) {
       customerAddress.trim(),
       customerStateName.trim() ? `State Name : ${customerStateName.trim()}, Code : ${customerStateCode.trim()}` : "",
     ].filter(Boolean).join("\n").slice(0, 500);
+    const billItems = items.map(({ productName, hsnSac, quantity, unit, unitPrice, gstRate }) => ({
+      productName, hsnSac, quantity, unit, unitPrice, gstRate,
+    }));
     try {
       const response = await fetch("/api/bills", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ requestId: requestId.current, customerName, customerMobile, customerAddress: invoiceAddress, taxMode, items, documentDetails }),
+        body: JSON.stringify({ requestId: requestId.current, customerName, customerMobile, customerAddress: invoiceAddress, taxMode, items: billItems, documentDetails }),
       });
       const result = await response.json();
       if (!response.ok || !result.success) throw new Error(result.message || "Bill could not be saved.");

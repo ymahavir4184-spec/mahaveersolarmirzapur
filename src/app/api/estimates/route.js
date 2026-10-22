@@ -1,10 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { getSupabaseServerClient, getSupabaseConfigurationMessage, isSupabaseConfigured } from "@/lib/supabaseServer";
-import { getStaffSession, isSameOriginRequest } from "@/lib/staffAuth";
+import { getStaffSession, getStaffSessionHash, isSameOriginRequest } from "@/lib/staffAuth";
 import { getBusinessInfo } from "@/lib/billing/businessInfo";
 import { decimalToScaledInteger, GST_RATES, roundHalfUp, sumMoney } from "@/lib/billing/billMath";
 import { cleanDocumentDetails } from "@/lib/billing/documentDetails";
+import { STAFF_IDLE_TIMEOUT_SECONDS } from "@/lib/quotation/sessionPolicy";
 
 const noStore = { "Cache-Control": "no-store" };
 const databaseNotConfigured = () => NextResponse.json({ success: false, message: getSupabaseConfigurationMessage() }, { status: 503, headers: noStore });
@@ -72,8 +73,8 @@ export async function GET(request) {
 
 export async function POST(request) {
   if (!isSameOriginRequest(request)) return NextResponse.json({ success: false }, { status: 403, headers: noStore });
-  const session = await getStaffSession(request);
-  if (!session) return unauthorized();
+  const sessionHash = getStaffSessionHash(request);
+  if (!sessionHash) return unauthorized();
   if (!isSupabaseConfigured()) return databaseNotConfigured();
 
   try {
@@ -128,7 +129,9 @@ export async function POST(request) {
     const requestId = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(body.requestId || "") ? body.requestId : randomUUID();
     const prefix = String(process.env.ESTIMATE_NUMBER_PREFIX || "ME").toUpperCase().replace(/[^A-Z0-9-]/g, "").slice(0, 12) || "ME";
     const supabase = getSupabaseServerClient();
-    const result = await supabase.rpc("create_estimate_v2", {
+    const result = await supabase.rpc("create_estimate_with_staff_session_v1", {
+      p_session_hash: sessionHash,
+      p_idle_timeout_seconds: STAFF_IDLE_TIMEOUT_SECONDS,
       p_request_id: requestId,
       p_estimate_prefix: prefix,
       p_customer_name: customerName,
@@ -137,14 +140,22 @@ export async function POST(request) {
       p_tax_mode: taxMode,
       p_items: cleanItems,
       p_seller_snapshot: business,
-      p_created_by: session.sub,
       p_document_details: documentDetails,
     });
     if (result.error) {
+      if (result.error.code === "28000") return unauthorized();
       console.error("Estimate creation failed:", result.error.code || result.error.message);
       return databaseUnavailable();
     }
-    return NextResponse.json({ success: true, data: result.data || {} }, { status: 201, headers: noStore });
+    const data = result.data || {};
+    const { items: recordItems, ...estimate } = data.estimate || {};
+    return NextResponse.json({
+      success: true,
+      data: {
+        estimate,
+        items: Array.isArray(data.items) ? data.items : recordItems || [],
+      },
+    }, { status: 201, headers: noStore });
   } catch {
     return NextResponse.json({ success: false, message: "Unable to create the estimate. Check the entered details and try again." }, { status: 400, headers: noStore });
   }
